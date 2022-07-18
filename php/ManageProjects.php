@@ -1,12 +1,16 @@
 <?php
 class ManageProjects
 {
-    function createProject($params)
+    function createProject()
     {
-        if (isset($params['nameCreateProject'])) {
-            if (!is_dir($_SERVER['DOCUMENT_ROOT'] . '/Projects/' . $params['nameCreateProject'])) {
-                mkdir($_SERVER['DOCUMENT_ROOT'] . '/Projects/' . $params['nameCreateProject']);
-                chmod($_SERVER['DOCUMENT_ROOT'] . '/Projects/' . $params['nameCreateProject'], 0775);
+        if (isset($_POST['nameCreateProject'])) {
+            if (!is_dir($_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath']. 'Projects/' . $_POST['nameCreateProject'])) {
+                mkdir($_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath']. 'Projects/' . $_POST['nameCreateProject']);
+                chmod($_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath']. 'Projects/' . $_POST['nameCreateProject'], 0775);
+                $this -> copyFolder([
+                    "fromPath" => $_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath']. 'Template/',
+                    "toPath" => $_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath']. 'Projects/' . $_POST['nameCreateProject']
+                ]);
                 return true;
             }
             return false;
@@ -15,13 +19,35 @@ class ManageProjects
 
     function deleteProject($params)
     {
-        rmdir($_SERVER['DOCUMENT_ROOT'] . '/Projects/' . $params['nameDeleteProject']);
+        if (!file_exists($params['deleteDirPath'])) {
+            return true;
+        }
+    
+        if (!is_dir($params['deleteDirPath'])) {
+            return unlink($params['deleteDirPath']);
+        }
+    
+        foreach (scandir($params['deleteDirPath']) as $item) {
+            if ($item == '.' || $item == '..') {
+                continue;
+            }
+    
+            if (! $this -> deleteProject([
+                "deleteDirPath" => $params['deleteDirPath'] . DIRECTORY_SEPARATOR . $item
+                ])) {
+                return false;
+            }
+    
+        }
+    
+        return rmdir($params['deleteDirPath']);
     }
 
     function copyFolder($params)
     {
         if (is_dir($params['fromPath'])) {
             @mkdir($params['toPath']);
+            chmod($params['toPath'], 0775);
             $d = dir($params['fromPath']);
             while (false !== ($entry = $d->read())) {
                 if ($entry == "." || $entry == "..") continue;
@@ -34,6 +60,7 @@ class ManageProjects
         } else {
             if (!file_exists($params['toPath']))
                 copy($params['fromPath'], $params['toPath']);
+                chmod($params['toPath'], 0664);
         }
     }
 }
@@ -44,7 +71,7 @@ if (isset($_POST['nameCreateProject'])) {
     header('Content-Type: application/json');
 
     $result = array(
-        'isDirCreate'  => $manage->createProject($_POST),
+        'isDirCreate'  => $manage->createProject(),
         'nextPage' => $_POST['nextPage']
     );
 
@@ -54,7 +81,9 @@ if (isset($_POST['nameCreateProject'])) {
 if (isset($_POST['nameDeleteProject'])) {
     header('Content-Type: application/json');
 
-    $manage->deleteProject($_POST);
+    $manage->deleteProject([
+        "deleteDirPath" => $_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath'] .'Projects/' . $_POST['nameDeleteProject']
+    ]);
     $result = array(
         'nextPage' => $_POST['nextPage']
     );

@@ -54,9 +54,9 @@ function Editor(params) {
         document.body.removeChild(a);
     }
 
-    this.loadJSON = function () {
+    this.loadJSON = function ( params ) {
         $.ajax({
-            url: "data.json",
+            url: `${window.location.pathname.match(/.*\//gm)}Projects/${params.nameProject}/data.json`,
             context: this
         }).done(this.openJSON);
     }
@@ -130,7 +130,7 @@ function EditorElem(params) {
     });
 
     for (let key in editorTypes[this.type].props) {
-        let className = "EditorProperty_" + editorTypes[this.type].props[key]
+        let className = "EditorProperty_" + editorTypes[this.type].props[key];
         this.props[editorTypes[this.type].props[key]] = new window[className]({
             elem: this
         });

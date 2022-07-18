@@ -52,6 +52,9 @@ if (!is_dir("Projects")) {
                 <input type="hidden" name="nextPage" value="<?php
                     echo $_SERVER['REQUEST_URI']
                 ?>">
+                <input type="hidden" name="editorPath" value="<?php
+                    echo $_SERVER['REQUEST_URI']
+                ?>">
                 <input id="nameProject" name="nameCreateProject" type="text">
                 <input class="btn btn-success" id="createProject" type="submit" value="Создать">
             </form>

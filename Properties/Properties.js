@@ -16,6 +16,22 @@ function EditorProperty_name(params) {
     }
 }
 
+function EditorProperty_color(params) {
+    this.elem = params.elem;
+    this.values = {};
+    this.values.color = {
+        "type": "color",
+        "name": "Цвет"
+    }
+
+    this.getJSON = function () {
+        return {
+            type: "color",
+            values: this.values
+        };
+    }
+}
+
 function EditorProperty_submit(params) {
     this.elem = params.elem;
     this.values = {};

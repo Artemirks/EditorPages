@@ -1,5 +1,5 @@
 <?php
-    define( 'EDITOR_PATH', '/' );
+    define( 'EDITOR_PATH', '/local/art/editor_pages/' );
     require( $_SERVER[ 'DOCUMENT_ROOT' ].EDITOR_PATH.'php/Editor.php' );
     $editor = new Editor();
     
@@ -21,12 +21,12 @@
     $elements = $editor->getElements();
     foreach( $elements as $elem ) 
     {
-        if ( $elem[ "js" ] != null ) {
+        if (array_key_exists('js', $elem) && $elem[ "js" ] != null ) {
             echo "
     <script src=\"{$elem[ "js" ]}\"></script>
         ";
         }
-        if ( $elem[ "css" ] != null ) {
+        if (array_key_exists('css', $elem) && $elem[ "css" ] != null ) {
             echo "
     <link rel=\"stylesheet\" href=\"{$elem[ "css" ]}\"></link>
         ";
@@ -42,8 +42,11 @@
     </div>
     <script>
         $(".editor").each(function() {
-            new Editor({
+            editor = new Editor({
                 obj: this
+            });
+            editor.loadJSON({
+                "nameProject": "<?php echo $_POST['nameEditProject']; ?>"
             });
         })
     </script>

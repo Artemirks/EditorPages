@@ -28,7 +28,7 @@ $( document ).ready( function() {
 	$("#formCreator").on("submit", function(e){
 		e.preventDefault();
 		$.ajax({
-			url: "../php/ManageProjects.php",
+			url: `${window.location.pathname}php/ManageProjects.php`,
 			method: "post",
 			dataType: 'json',
 			data: $(this).serialize(),
@@ -64,8 +64,16 @@ $( document ).ready( function() {
 			})))
 			.append($("<form>", {
 				"id": "formEditor",
-				"style": "display: inline-block; margin-right: 20px"
+				"style": "display: inline-block; margin-right: 20px",
+				"method": "POST",
+				"action": `${window.location.pathname}editorProject.php`
+				
 			})
+			.append($("<input>", {
+				"type": "hidden",
+				"name": "nameEditProject",
+				"value": $(this).text()
+			}))
 			.append($("<input>", {
 				"class": "btn btn-primary",
 				"type": "submit",
@@ -78,7 +86,7 @@ $( document ).ready( function() {
 					e.preventDefault();
 					if (confirm("Вы уверены? Это действие нельзя отменить")) {
 						$.ajax({
-							url: "../php/ManageProjects.php",
+							url: `${window.location.pathname}php/ManageProjects.php`,
 							method: "post",
 							dataType: 'json',
 							data: $(this).serialize(),
@@ -98,6 +106,11 @@ $( document ).ready( function() {
 				"type": "hidden",
 				"name": "nextPage",
 				"value": window.location.href
+			}))
+			.append($("<input>", {
+				"type": "hidden",
+				"name": "editorPath",
+				"value": window.location.pathname
 			}))
 			.append($("<input>", {
 				"class": "btn btn-primary",

@@ -25,6 +25,30 @@ function FormInput_string( params ) {
     }
 }
 
+function FormInput_color( params ) {
+    this.parentValue = params.parentValue;
+    this.id = params.id;
+    this.obj = $("<div>", {
+        class: "editor-form-color",
+    });
+    this.label = $("<label>", {
+        text: this.parentValue.name,
+        for: "editor-field-" + this.id
+    });
+    this.input = $("<input>", {
+        type: "color",
+        id: "editor-field-" + this.id,
+        value: this.parentValue.value
+    });
+
+    this.obj
+        .append(this.label)
+        .append(this.input);
+    this.set = function () {
+        this.parentValue.value = this.input.val();
+    }
+}
+
 function FormInput_submit( params ) {
     this.parentValue = params.parentValue;
     this.panel = params.panel;

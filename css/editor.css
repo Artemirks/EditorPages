@@ -1,0 +1,45 @@
+.editor-root {
+    display: flex;
+    background-color: #999;
+    border: 2px solid #555;
+}
+
+.editor-panel {
+    background-color: #777;
+}
+
+.editor-panel-on {
+    width: 300px;
+}
+
+.editor-panel-off {
+    
+}
+
+.editor-elem-wrapper.editor-elem-type-page {
+    flex-grow: 1;
+    margin: 2px;
+    padding: 2px;
+    
+}
+
+.editor-elem-type-page > .editor-elem-obj {
+    height: 100%;
+    background-color: beige;
+    overflow: scroll;
+}
+
+.editor-elem-wrapper:not(.editor-elem-selected) {
+    border: 2px dashed #0000;
+}
+
+.editor-elem-wrapper.editor-elem-selected {
+    border: 2px dashed #b00;
+}
+
+.editor-elem-type-new > .editor-elem-obj {
+    min-height: 50px;
+    min-width: 50px;
+    border: 1px solid #3f3;
+    background-color: #9f9;
+}

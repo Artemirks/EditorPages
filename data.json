@@ -1,0 +1,49 @@
+{
+  "type": "page",
+  "childs": [
+    {
+      "type": "new",
+      "childs": [],
+      "props": [
+        {
+          "type": "name",
+          "values": {
+            "name": {
+              "type": "string",
+              "name": "Имя",
+              "value": "novichok1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "new",
+      "childs": [],
+      "props": [
+        {
+          "type": "name",
+          "values": {
+            "name": {
+              "type": "string",
+              "name": "Имя",
+              "value": "novichok2"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "props": [
+    {
+      "type": "name",
+      "values": {
+        "name": {
+          "type": "string",
+          "name": "Имя",
+          "value": "test"
+        }
+      }
+    }
+  ]
+}

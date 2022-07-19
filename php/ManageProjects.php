@@ -63,6 +63,11 @@ class ManageProjects
                 chmod($params['toPath'], 0664);
         }
     }
+
+    function saveProjectsJson($params)
+    {
+        file_put_contents($params['saveDirPath'], $_POST['dataJSON']);
+    }
 }
 
 $manage = new ManageProjects();
@@ -89,4 +94,12 @@ if (isset($_POST['nameDeleteProject'])) {
     );
 
     echo json_encode($result);
+}
+
+if (isset($_POST['dataJSON'])) {
+
+    $manage->saveProjectsJson([
+        "saveDirPath" => $_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath'] .'Projects/' . $_POST['nameProject'] .'/data.json'
+    ]);
+
 }

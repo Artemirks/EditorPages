@@ -1,5 +1,7 @@
 <?php
-    define( 'EDITOR_PATH', '/local/art/editor_pages/' );
+    $matches = [];
+    preg_match('/.*\//',$_SERVER['REQUEST_URI'], $matches);
+    define( 'EDITOR_PATH', $matches[0]);
     require( $_SERVER[ 'DOCUMENT_ROOT' ].EDITOR_PATH.'php/Editor.php' );
     $editor = new Editor();
     
@@ -15,8 +17,8 @@
     <link rel="stylesheet" href="css/editor.css">
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/editor.js"></script>
-    <script src="Properties/Properties.js"></script>
-    <script src="Forms/Forms.js"></script>
+    <script src="Properties/Properties.js?v1"></script>
+    <script src="Forms/Forms.js?v1"></script>
 <?php
     $elements = $editor->getElements();
     foreach( $elements as $elem ) 
@@ -43,10 +45,11 @@
     <script>
         $(".editor").each(function() {
             editor = new Editor({
-                obj: this
+                obj: this,
+                "nameProject": "<?php if (isset($_POST['nameEditProject'])) {echo $_POST['nameEditProject']; } else {echo 'test';}  ?>"
             });
             editor.loadJSON({
-                "nameProject": "<?php echo $_POST['nameEditProject']; ?>"
+                
             });
         })
     </script>

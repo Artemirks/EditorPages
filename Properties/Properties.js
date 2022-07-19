@@ -1,13 +1,13 @@
 /*Свойства элементов */
 function EditorProperty_name(params) {
+
     this.elem = params.elem;
     this.values = {};
     this.values.name = {
         "type": "string",
-        "name": "Имя",
+        "name": "Тип блока",
         "value": params.elem.type
     }
-
     this.getJSON = function () {
         return {
             type: "name",
@@ -16,12 +16,29 @@ function EditorProperty_name(params) {
     }
 }
 
+function EditorProperty_title(params) {
+    this.elem = params.elem;
+    this.values = {};
+    this.values.name = {
+        "type": "string",
+        "name": "Title",
+        "value": params.elem.type
+    }
+    this.getJSON = function () {
+        return {
+            type: "title",
+            values: this.values
+        };
+    }
+}
+
 function EditorProperty_color(params) {
+    
     this.elem = params.elem;
     this.values = {};
     this.values.color = {
         "type": "color",
-        "name": "Цвет"
+        "name": "Цвет",
     }
 
     this.getJSON = function () {
@@ -66,6 +83,20 @@ function EditorProperty_openJSON(params) {
     this.values.saveJSON = {
         "type": "openJSON",
         "name": "Открыть JSON",
+        "value": ""
+    }
+
+    this.getJSON = function () {
+        return false;
+    }
+}
+
+function EditorProperty_saveProject(params) {
+    this.elem = params.elem;
+    this.values = {};
+    this.values.saveJSON = {
+        "type": "saveProject",
+        "name": "Сохранить",
         "value": ""
     }
 

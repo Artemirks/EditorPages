@@ -11,6 +11,7 @@ var editorTypes = {};
 
 function Editor(params) {
     this.obj = $(params.obj);
+    this.nameProject = params.nameProject;
     this.obj.addClass("editor-root");
     this.obj.height($(window).height());
     this.selectedElem = null;
@@ -44,19 +45,31 @@ function Editor(params) {
     }, this));
 
     this.saveJSON = function () {
-        const a = document.createElement("a");
+       /*  const a = document.createElement("a");
         a.href = URL.createObjectURL(new Blob([JSON.stringify(this.page.getJSON(), null, 2)], {
             type: "text/plain"
         }));
         a.setAttribute("download", "data.json");
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
+        document.body.removeChild(a); */
+        $.ajax({
+            url: `${window.location.pathname.match(/.*\//gm)}php/ManageProjects.php`,
+            method: "post",
+            data: {
+                "editorPath": window.location.pathname.match(/.*\//gm)[0],
+                "nameProject": this.nameProject,
+                "dataJSON": JSON.stringify(this.page.getJSON())
+            },
+            success: function(data){
+                alert("Проект сохранен");
+            }
+        });
     }
 
     this.loadJSON = function ( params ) {
         $.ajax({
-            url: `${window.location.pathname.match(/.*\//gm)}Projects/${params.nameProject}/data.json`,
+            url: `${window.location.pathname.match(/.*\//gm)}Projects/${this.nameProject}/data.json`,
             context: this
         }).done(this.openJSON);
     }
@@ -71,8 +84,12 @@ function Editor(params) {
         });
         this.obj.prepend(this.page.wrapper);
         this.selectedElem = null;
-
     }
+
+    this.getHTML = function (elements) {
+        console.log(this.obj);
+    }
+
 }
 
 function EditorPanel(params) {
@@ -196,6 +213,7 @@ function EditorElem(params) {
         }
         return out;
     }
+
     return this;
 }
 

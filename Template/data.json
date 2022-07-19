@@ -1,43 +1,53 @@
 {
-    "type": "page",
-    "childs": [
-      {
-        "type": "new",
-        "childs": [],
-        "props": [
-          {
-            "type": "name",
-            "values": {
-              "name": {
-                "type": "string",
-                "name": "Имя",
-                "value": "new"
-              }
+  "type": "page",
+  "childs": [
+    {
+      "type": "new",
+      "childs": [],
+      "props": [
+        {
+          "type": "name",
+          "values": {
+            "name": {
+              "type": "string",
+              "name": "Тип блока",
+              "value": "new"
             }
           }
-        ]
-      }
-    ],
-    "props": [
-      {
-        "type": "name",
-        "values": {
-          "name": {
-            "type": "string",
-            "name": "Имя",
-            "value": "page"
-          }
         }
-      },
-      {
-        "type": "color",
-        "values": {
-          "color": {
-            "type": "color",
-            "name": "Цвет",
-            "value": "#f5f5dc"
-          }
+      ]
+    }
+  ],
+  "props": [
+    {
+      "type": "name",
+      "values": {
+        "name": {
+          "type": "string",
+          "name": "Тип блока",
+          "value": "page"
         }
       }
-    ]
-  }
+    },
+    {
+      "type": "title",
+      "values": {
+        "name": {
+          "type": "string",
+          "name": "Title",
+          "value": "page"
+        }
+      }
+    },
+    {
+      "type": "color",
+      "values": {
+        "color": {
+          "type": "color",
+          "name": "Цвет",
+          "value": "#f5f5dc"
+        }
+      }
+    }
+  ]
+}

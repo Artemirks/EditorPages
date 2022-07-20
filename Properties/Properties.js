@@ -104,3 +104,17 @@ function EditorProperty_saveProject(params) {
         return false;
     }
 }
+
+function EditorProperty_toProjectPage(params) {
+    this.elem = params.elem;
+    this.values = {};
+    this.values.saveJSON = {
+        "type": "toProjectPage",
+        "name": "На главную страницу",
+        "value": ""
+    }
+
+    this.getJSON = function () {
+        return false;
+    }
+}

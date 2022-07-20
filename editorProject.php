@@ -16,7 +16,7 @@
     <title>Конструктор</title>
     <link rel="stylesheet" href="css/editor.css">
     <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="js/editor.js"></script>
+    <script src="js/editor.js?v1"></script>
     <script src="Properties/Properties.js?v1"></script>
     <script src="Forms/Forms.js?v1"></script>
 <?php
@@ -48,9 +48,7 @@
                 obj: this,
                 "nameProject": "<?php if (isset($_POST['nameEditProject'])) {echo $_POST['nameEditProject']; } else {echo 'test';}  ?>"
             });
-            editor.loadJSON({
-                
-            });
+            editor.loadJSON();
         })
     </script>
 </body>

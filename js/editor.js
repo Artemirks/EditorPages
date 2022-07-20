@@ -15,13 +15,17 @@ function Editor(params) {
     this.obj.addClass("editor-root");
     this.obj.height($(window).height());
     this.selectedElem = null;
+    this.elements = [];
     params.obj.editor = this;
 
-    this.page = new EditorElem({
-        editor: this,
-        type: "page"
-    });
-    this.obj.append(this.page.wrapper);
+    if (params.nameProject == undefined) {
+        this.page = new EditorElem({
+            editor: this,
+            type: "page"
+        });
+        this.obj.append(this.page.wrapper);
+    }
+
     this.panel = new EditorPanel({
         editor: this
     });
@@ -45,14 +49,14 @@ function Editor(params) {
     }, this));
 
     this.saveJSON = function () {
-       /*  const a = document.createElement("a");
-        a.href = URL.createObjectURL(new Blob([JSON.stringify(this.page.getJSON(), null, 2)], {
-            type: "text/plain"
-        }));
-        a.setAttribute("download", "data.json");
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a); */
+        /*  const a = document.createElement("a");
+         a.href = URL.createObjectURL(new Blob([JSON.stringify(this.page.getJSON(), null, 2)], {
+             type: "text/plain"
+         }));
+         a.setAttribute("download", "data.json");
+         document.body.appendChild(a);
+         a.click();
+         document.body.removeChild(a); */
         $.ajax({
             url: `${window.location.pathname.match(/.*\//gm)}php/ManageProjects.php`,
             method: "post",
@@ -61,22 +65,23 @@ function Editor(params) {
                 "nameProject": this.nameProject,
                 "dataJSON": JSON.stringify(this.page.getJSON())
             },
-            success: function(data){
+            success: function (data) {
                 alert("Проект сохранен");
             }
         });
     }
 
-    this.loadJSON = function ( params ) {
+    this.loadJSON = function () {
         $.ajax({
             url: `${window.location.pathname.match(/.*\//gm)}Projects/${this.nameProject}/data.json`,
-            context: this
+            context: this,
+            cache: false
         }).done(this.openJSON);
     }
 
     this.openJSON = function (elements) {
-        this.page.wrapper.remove();
-        this.panel.obj.html("");
+        /* this.page.wrapper.remove();
+        this.panel.obj.html(""); */
         this.page = new EditorElem({
             editor: this,
             type: "page",
@@ -84,10 +89,26 @@ function Editor(params) {
         });
         this.obj.prepend(this.page.wrapper);
         this.selectedElem = null;
+        this.panel.setAllProps();
     }
 
-    this.getHTML = function (elements) {
-        console.log(this.obj);
+    this.getHTML = function () {
+        let content = this.page.wrapper[0].outerHTML.replace(/editor-elem-wrapper\s|\seditor-elem-selected|<div[^>]+class="[^>]*new[^>]*"[^>]*>.*?<\/div><\/div>/gm, '');
+        content = content.replace(/></gm, '>\n<');
+        return content;
+    }
+
+    this.saveHTML = function () {
+        $.ajax({
+            url: `${window.location.pathname.match(/.*\//gm)}php/CreatePage.php`,
+            method: "post",
+            data: {
+                "editorPath": window.location.pathname.match(/.*\//gm)[0],
+                "projectName": this.nameProject,
+                "html": this.getHTML(),
+                "title": document.title
+            }
+        });
     }
 
 }
@@ -129,6 +150,31 @@ function EditorPanel(params) {
             }
         }
     }
+
+    this.setAllProps = function () {
+        this.fields = [];
+        let fieldsNumber = 0;
+        for (let i = 0; i < this.editor.elements.length; i++) {
+            this.elem = this.editor.elements[i];
+            for (let key in this.editor.elements[i].props) {
+                for (let value in this.editor.elements[i].props[key].values) {
+                    let className = "FormInput_" + this.editor.elements[i].props[key].values[value].type;
+                    this.fields[fieldsNumber] = new window[className]({
+                        parentValue: this.editor.elements[i].props[key].values[value],
+                        panel: this,
+                        id: fieldsNumber
+                    });
+                    fieldsNumber++;
+                }
+            }
+        }
+       
+        for (let key in this.fields) {
+            if (typeof this.fields[key].set == "function") {
+                this.fields[key].set();
+            }
+        }
+    }
 }
 
 function EditorElem(params) {
@@ -162,8 +208,8 @@ function EditorElem(params) {
     if (params.json != undefined && params.json.childs != undefined) {
         for (let key in params.json.childs) {
             let i = this.childs.length;
-            this.childs[ i ] = new EditorElem({
-                editor: this,
+            this.childs[i] = new EditorElem({
+                editor: this.editor,
                 type: params.json.childs[key].type,
                 json: params.json.childs[key]
             });
@@ -171,8 +217,8 @@ function EditorElem(params) {
         }
     }
     else {
-        if ( typeof editorElementsMethods[ this.type ] == "function" ) {
-            editorElementsMethods[ this.type ]({
+        if (typeof editorElementsMethods[this.type] == "function") {
+            editorElementsMethods[this.type]({
                 element: this
             })
         }
@@ -213,7 +259,7 @@ function EditorElem(params) {
         }
         return out;
     }
-
+    this.editor.elements.push(this);
     return this;
 }
 

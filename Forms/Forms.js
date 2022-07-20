@@ -111,7 +111,7 @@ function FormInput_openJSON( params ) {
     this.obj.append(this.input);
 
     this.input.on("click", $.proxy(function () {
-        this.loadJSON();
+        this.openJSON();
     }, this.panel.editor))
 }
 
@@ -130,7 +130,27 @@ function FormInput_saveProject( params ) {
     this.obj.append(this.input);
 
     this.input.on("click", $.proxy(function () {
+        this.panel.setProps();
         this.saveJSON();
-        //this.saveHTML();
+        this.saveHTML();
+    }, this.panel.editor))
+}
+
+function FormInput_toProjectPage( params ) {
+    this.parentValue = params.parentValue;
+    this.panel = params.panel;
+    this.id = params.id;
+    this.obj = $("<div>", {
+        class: "editor-form-submit",
+    });
+    this.input = $("<input>", {
+        type: "button",
+        id: "editor-field-" + this.id,
+        value: this.parentValue.name
+    });
+    this.obj.append(this.input);
+
+    this.input.on("click", $.proxy(function () {
+        window.location.href = "./"
     }, this.panel.editor))
 }

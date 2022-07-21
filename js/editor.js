@@ -158,17 +158,18 @@ function EditorPanel(params) {
             this.elem = this.editor.elements[i];
             for (let key in this.editor.elements[i].props) {
                 for (let value in this.editor.elements[i].props[key].values) {
-                    let className = "FormInput_" + this.editor.elements[i].props[key].values[value].type;
-                    this.fields[fieldsNumber] = new window[className]({
-                        parentValue: this.editor.elements[i].props[key].values[value],
-                        panel: this,
-                        id: fieldsNumber
-                    });
-                    fieldsNumber++;
+                    if ( this.editor.elements[i].props[key].values[value].value != '' ) {
+                        let className = "FormInput_" + this.editor.elements[i].props[key].values[value].type;
+                        this.fields[fieldsNumber] = new window[className]({
+                            parentValue: this.editor.elements[i].props[key].values[value],
+                            panel: this
+                        });
+                        fieldsNumber++;
+                    }
                 }
             }
         }
-       
+
         for (let key in this.fields) {
             if (typeof this.fields[key].set == "function") {
                 this.fields[key].set();

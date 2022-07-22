@@ -58,7 +58,6 @@ $(document).ready(function () {
 					"style": "display: inline-block; margin-right: 20px",
 					"submit": function (e) {
 						e.preventDefault();
-						var path = '';
 						$.when($.ajax({
 							url: `${window.location.pathname}php/ManageProjects.php`,
 							method: "post",
@@ -66,7 +65,6 @@ $(document).ready(function () {
 							data: $(this).serialize(),
 							success: function (data) {
 								location.href = data.zipPath;
-								path = data.zipPath;
 							}
 						})).then(
 							function (data) {
@@ -77,11 +75,11 @@ $(document).ready(function () {
 										"nameDownloadProject": data.zipPath,
 										"isAlreadyDownload": true
 									}
-								})
+								});
 
 							}, function() {
-								alert('Ошибка скачивания')
-							})
+								alert('Ошибка скачивания');
+							});
 					}
 				})
 					.append($("<input>", {

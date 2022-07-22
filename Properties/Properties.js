@@ -45,7 +45,32 @@ function EditorProperty_color(params) {
         return {
             type: "color",
             values: this.values
-        };
+        };  
+    }
+}
+
+function EditorProperty_elements(params) {
+    
+    this.elem = params.elem;
+    this.values = {};
+    this.values.elements = {
+        "type": "select",
+        "name": "Тип элемента",
+        "values": [
+            {
+                "type": "Header",
+                "name": "Заголовок"
+            }
+            ,
+            {
+                "type": "test",
+                "name": "Тест"
+            }
+        ]
+    }
+
+    this.getJSON = function () {
+        return false;
     }
 }
 

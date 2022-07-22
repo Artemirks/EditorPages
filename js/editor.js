@@ -21,7 +21,8 @@ function Editor(params) {
     if (params.nameProject == undefined) {
         this.page = new EditorElem({
             editor: this,
-            type: "page"
+            type: "page",
+            parent: this
         });
         this.obj.append(this.page.wrapper);
     }
@@ -85,7 +86,8 @@ function Editor(params) {
         this.page = new EditorElem({
             editor: this,
             type: "page",
-            json: elements
+            json: elements,
+            parent: this
         });
         this.obj.prepend(this.page.wrapper);
         this.selectedElem = null;
@@ -135,7 +137,8 @@ function EditorPanel(params) {
                 this.fields[i] = new window[className]({
                     parentValue: this.elem.props[key].values[value],
                     panel: this,
-                    id: fieldsNumber
+                    id: fieldsNumber,
+                    parent: this.elem.parent
                 });
                 fieldsNumber++;
                 this.obj.append(this.fields[i].obj);
@@ -171,7 +174,7 @@ function EditorPanel(params) {
         }
 
         for (let key in this.fields) {
-            if (typeof this.fields[key].set == "function") {
+            if (typeof this.fields[key].set == "function" && this.fields[key].parentValue.name != 'Тип элемента') {
                 this.fields[key].set();
             }
         }
@@ -181,6 +184,7 @@ function EditorPanel(params) {
 function EditorElem(params) {
     this.editor = params.editor;
     this.type = params.type;
+    this.parent = params.parent;
     this.childs = [];
     this.props = [];
 
@@ -211,6 +215,7 @@ function EditorElem(params) {
             let i = this.childs.length;
             this.childs[i] = new EditorElem({
                 editor: this.editor,
+                parent: this,
                 type: params.json.childs[key].type,
                 json: params.json.childs[key]
             });

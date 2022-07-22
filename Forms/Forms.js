@@ -77,6 +77,62 @@ function FormInput_color(params) {
     }
 }
 
+function FormInput_select(params) {
+    this.parentValue = params.parentValue;
+    this.panel = params.panel;
+    this.id = params.id;
+    this.parent = params.parent;
+    this.obj = $("<div>", {
+        class: "editor-form-select",
+    });
+    this.select = $("<select>", {
+        id: "editor-field-" + this.id,
+    });
+    this.label = $("<label>", {
+        text: this.parentValue.name,
+        for: "editor-field-" + this.id
+    });
+    this.options = [];
+    for (let i = 0; i <this.parentValue.values.length; i++) {
+        this.options[i] = $("<option>", {
+            label: this.parentValue.values[i].name,
+            value: this.parentValue.values[i].type
+        });
+    } 
+    this.select.append(this.options);
+    this.obj
+            .append(this.label)
+            .append(this.select)
+
+    this.set = function () {
+        switch (params.parentValue.name) {
+            case 'Тип элемента':
+                this.panel.elem.wrapper.remove();
+                this.panel.obj.html("")
+                delete this.panel.elem;
+                let i = this.parent.childs.length;
+                this.parent.childs[i] = new EditorElem({
+                    editor: this.parent.editor,
+                    parent: this.parent,
+                    type: "new"
+                });
+                this.parent.obj.append(this.parent.childs[i].wrapper);
+                i += 1;
+                this.parent.childs[i] = new EditorElem({
+                    editor: this.parent.editor,
+                    parent: this.parent,
+                    type: "new"
+                });
+                this.parent.obj.append(this.parent.childs[i].wrapper);
+                break;
+        }
+    }
+
+   /*  this.input.on("click", $.proxy(function () {
+        this.setProps();
+    }, this.panel)) */
+}
+
 function FormInput_submit(params) {
     this.parentValue = params.parentValue;
     this.panel = params.panel;

@@ -58,13 +58,18 @@ $(document).ready(function () {
 					"style": "display: inline-block; margin-right: 20px",
 					"submit": function (e) {
 						e.preventDefault();
-						$.ajax({
+						var path = '';
+						$.when($.ajax({
 							url: `${window.location.pathname}php/ManageProjects.php`,
 							method: "post",
 							dataType: 'json',
 							data: $(this).serialize(),
 							success: function (data) {
-								location.href= data.zipPath;
+								location.href = data.zipPath;
+								path = data.zipPath;
+							}
+						})).then(
+							function (data) {
 								$.ajax({
 									url: `${window.location.pathname}php/ManageProjects.php`,
 									method: "post",
@@ -72,13 +77,11 @@ $(document).ready(function () {
 										"nameDownloadProject": data.zipPath,
 										"isAlreadyDownload": true
 									}
-								});
-							},
-							error: function(){
-								alert('Ошибка скачивания');
-							}
-						});
-						
+								})
+
+							}, function() {
+								alert('Ошибка скачивания')
+							})
 					}
 				})
 					.append($("<input>", {

@@ -22,7 +22,8 @@ function Editor(params) {
         this.page = new EditorElem({
             editor: this,
             type: "page",
-            parent: this
+            parent: this,
+            index: 0
         });
         this.obj.append(this.page.wrapper);
     }
@@ -86,6 +87,7 @@ function Editor(params) {
         this.page = new EditorElem({
             editor: this,
             type: "page",
+            index: 0,
             json: elements,
             parent: this
         });
@@ -138,7 +140,8 @@ function EditorPanel(params) {
                     parentValue: this.elem.props[key].values[value],
                     panel: this,
                     id: fieldsNumber,
-                    parent: this.elem.parent
+                    parent: this.elem.parent,
+                    index: this.elem.index
                 });
                 fieldsNumber++;
                 this.obj.append(this.fields[i].obj);
@@ -185,6 +188,7 @@ function EditorElem(params) {
     this.editor = params.editor;
     this.type = params.type;
     this.parent = params.parent;
+    this.index = params.index;
     this.childs = [];
     this.props = [];
 
@@ -216,6 +220,7 @@ function EditorElem(params) {
             this.childs[i] = new EditorElem({
                 editor: this.editor,
                 parent: this,
+                index: i,
                 type: params.json.childs[key].type,
                 json: params.json.childs[key]
             });

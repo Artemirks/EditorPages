@@ -82,6 +82,7 @@ function FormInput_select(params) {
     this.panel = params.panel;
     this.id = params.id;
     this.parent = params.parent;
+    this.index = params.index;
     this.obj = $("<div>", {
         class: "editor-form-select",
     });
@@ -107,23 +108,27 @@ function FormInput_select(params) {
     this.set = function () {
         switch (params.parentValue.name) {
             case 'Тип элемента':
-                this.panel.elem.wrapper.remove();
-                this.panel.obj.html("")
-                delete this.panel.elem;
-                let i = this.parent.childs.length;
-                this.parent.childs[i] = new EditorElem({
+                this.panel.obj.html("");
+                for (let i = this.parent.childs.length-1; i > this.index; i--) {
+                    this.parent.childs[i].index += 2;
+                    this.parent.childs[this.parent.childs[i].index] = this.parent.childs[i];
+                }
+
+                this.parent.childs[this.index+1] =  new EditorElem({
                     editor: this.parent.editor,
                     parent: this.parent,
-                    type: "new"
+                    type: "header",
+                    index: this.index+1
                 });
-                this.parent.obj.append(this.parent.childs[i].wrapper);
-                i += 1;
-                this.parent.childs[i] = new EditorElem({
+                this.panel.elem.wrapper.after(this.parent.childs[this.index+1].wrapper);
+                this.parent.childs[this.index+2] =  new EditorElem({
                     editor: this.parent.editor,
                     parent: this.parent,
-                    type: "new"
+                    type: "new",
+                    index: this.index+2
                 });
-                this.parent.obj.append(this.parent.childs[i].wrapper);
+                this.parent.childs[this.index+1].wrapper.after(this.parent.childs[this.index+2].wrapper);
+                this.panel.elem.unselect();
                 break;
         }
     }

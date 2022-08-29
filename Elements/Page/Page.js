@@ -1,7 +1,7 @@
 editorTypes.page = { //описание объекта
     "html": "<div></div>", //только один тэг
     "childs": true,
-    "props": [ "name", "title", "color", "submit","saveProject", "toProjectPage" ]
+    "props": [ "name", "title", "backgroundColor", "submit","saveProject", "toProjectPage" ]
 }
 
 editorElementsMethods.page = function ( params ) { //методы объекта

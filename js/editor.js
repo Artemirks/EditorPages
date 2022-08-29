@@ -71,7 +71,7 @@ function Editor(params) {
                 alert("Проект сохранен");
             }
         });
-    }
+    };
 
     this.loadJSON = function () {
         $.ajax({
@@ -79,7 +79,7 @@ function Editor(params) {
             context: this,
             cache: false
         }).done(this.openJSON);
-    }
+    };
 
     this.openJSON = function (elements) {
         /* this.page.wrapper.remove();
@@ -94,13 +94,13 @@ function Editor(params) {
         this.obj.prepend(this.page.wrapper);
         this.selectedElem = null;
         this.panel.setAllProps();
-    }
+    };
 
     this.getHTML = function () {
         let content = this.page.wrapper[0].outerHTML.replace(/editor-elem-wrapper\s|\seditor-elem-selected|<div[^>]+class="[^>]*new[^>]*"[^>]*>.*?<\/div><\/div>/gm, '');
         content = content.replace(/></gm, '>\n<');
         return content;
-    }
+    };
 
     this.saveHTML = function () {
         $.ajax({
@@ -113,7 +113,7 @@ function Editor(params) {
                 "title": document.title
             }
         });
-    }
+    };
 
 }
 
@@ -134,20 +134,21 @@ function EditorPanel(params) {
         let fieldsNumber = 0;
         for (let key in this.elem.props) {
             for (let value in this.elem.props[key].values) {
-                i = this.fields.length;
+                let i = this.fields.length;
                 let className = "FormInput_" + this.elem.props[key].values[value].type;
                 this.fields[i] = new window[className]({
                     parentValue: this.elem.props[key].values[value],
                     panel: this,
                     id: fieldsNumber,
                     parent: this.elem.parent,
+                    elem: this.elem,
                     index: this.elem.index
                 });
                 fieldsNumber++;
                 this.obj.append(this.fields[i].obj);
             }
         }
-    }
+    };
 
     this.setProps = function () {
         for (let key in this.fields) {
@@ -155,7 +156,7 @@ function EditorPanel(params) {
                 this.fields[key].set();
             }
         }
-    }
+    };
 
     this.setAllProps = function () {
         this.fields = [];
@@ -168,20 +169,20 @@ function EditorPanel(params) {
                         let className = "FormInput_" + this.editor.elements[i].props[key].values[value].type;
                         this.fields[fieldsNumber] = new window[className]({
                             parentValue: this.editor.elements[i].props[key].values[value],
-                            panel: this
+                            panel: this,
+                            elem: this.elem
                         });
                         fieldsNumber++;
                     }
                 }
             }
         }
-
         for (let key in this.fields) {
             if (typeof this.fields[key].set == "function" && this.fields[key].parentValue.name != 'Тип элемента') {
                 this.fields[key].set();
             }
         }
-    }
+    };
 }
 
 function EditorElem(params) {
@@ -191,7 +192,6 @@ function EditorElem(params) {
     this.index = params.index;
     this.childs = [];
     this.props = [];
-
     this.wrapper = $("<div>", {
         class: "editor-elem-wrapper"
     });
@@ -200,7 +200,6 @@ function EditorElem(params) {
     this.obj = $(editorTypes[this.type].html, {
         class: "editor-elem-obj"
     });
-
     for (let key in editorTypes[this.type].props) {
         let className = "EditorProperty_" + editorTypes[this.type].props[key];
         this.props[editorTypes[this.type].props[key]] = new window[className]({
@@ -214,7 +213,7 @@ function EditorElem(params) {
             }
         }
     }
-    if (params.json != undefined && params.json.childs != undefined) {
+    if (params.json != undefined && params.json.childs.length != 0) {
         for (let key in params.json.childs) {
             let i = this.childs.length;
             this.childs[i] = new EditorElem({
@@ -228,29 +227,30 @@ function EditorElem(params) {
         }
     }
     else {
-        if (typeof editorElementsMethods[this.type] == "function") {
+        if ((params.json == undefined || this.type == 'new') && typeof editorElementsMethods[this.type] == "function") {
             editorElementsMethods[this.type]({
                 element: this
-            })
+            });
         }
     }
+
     this.wrapper.append(this.obj);
     this.changeClass = function (params) {
         this.type = params.type;
         this.wrapper
             .removeClassWild("editor-elem-type-*")
             .addClass("editor-elem-type-" + this.type);
-    }
+    };
     this.changeClass({
         type: this.type
     });
 
     this.select = function () {
         this.wrapper.addClass("editor-elem-selected");
-    }
+    };
     this.unselect = function () {
         this.wrapper.removeClass("editor-elem-selected");
-    }
+    };
 
     this.getJSON = function () {
         let out = {

@@ -3,6 +3,7 @@
 
 function FormInput_string(params) {
     this.parentValue = params.parentValue;
+    this.elem = params.elem;
     if (params.id != undefined) {
         this.id = params.id;
         this.obj = $("<div>", {
@@ -18,7 +19,7 @@ function FormInput_string(params) {
             value: this.parentValue.value,
         });
 
-        if (params.parentValue.name == 'Тип блока') {
+        if (this.parentValue.name == 'Тип блока') {
             this.input[0].readOnly = true;
         }
 
@@ -28,7 +29,7 @@ function FormInput_string(params) {
     }
 
     this.set = function () {
-        switch (params.parentValue.name) {
+        switch (this.parentValue.name) {
             case 'Title':
                 if (params.id != undefined) {
                     document.title = this.input.val();
@@ -40,11 +41,55 @@ function FormInput_string(params) {
         if (params.id != undefined) {
             this.parentValue.value = this.input.val();
         }
+    };
+}
+
+function FormInput_textarea(params) {
+    this.parentValue = params.parentValue;
+    this.elem = params.elem;
+    if (params.id != undefined) {
+        this.id = params.id;
+        this.obj = $("<div>", {
+            class: "editor-form-textarea",
+        });
+        this.label = $("<label>", {
+            text: this.parentValue.name,
+            for: "editor-field-" + this.id,
+        })
+        .css({
+            "margin-right": "15px"
+        });
+        this.input = $("<textarea>", {
+            id: "editor-field-" + this.id,
+            rows: 2,
+            cols: 15,
+            text: this.parentValue.value
+        });
+
+        this.obj
+            .append(this.label)
+            .append(this.input);
     }
+
+    this.set = function () {
+        switch (this.parentValue.name) {
+            case 'ElemText':
+                if (params.id != undefined) {
+                    this.elem.obj.html(this.input.val());
+                } else {
+                    this.elem.obj.html(this.parentValue.value);
+                }
+                break;
+        }
+        if (params.id != undefined) {
+            this.parentValue.value = this.input.val();
+        }
+    };
 }
 
 function FormInput_color(params) {
     this.parentValue = params.parentValue;
+    this.elem = params.elem;
     if (params.id != undefined) {
         this.id = params.id;
         this.obj = $("<div>", {
@@ -66,15 +111,27 @@ function FormInput_color(params) {
     }
 
     this.set = function () {
-        if (params.id != undefined) {
-            params.panel.elem.obj.css("backgroundColor", this.input.val());
-        } else {
-            params.panel.elem.obj.css("backgroundColor", this.parentValue.value);
+       
+        switch (this.parentValue.name) {
+            case 'Цвет':
+                if (params.id != undefined) {
+                    this.elem.obj.css("backgroundColor", this.input.val());
+                } else {
+                    this.elem.obj.css("backgroundColor", this.parentValue.value);
+                }
+                break;
+            case "Цвет текста":
+                if (params.id != undefined) {
+                    this.elem.obj.css("color", this.input.val());
+                } else {
+                    this.elem.obj.css("color", this.parentValue.value);
+                }
+                break;
         }
         if (params.id != undefined) {
             this.parentValue.value = this.input.val();
         }
-    }
+    };
 }
 
 function FormInput_select(params) {
@@ -82,6 +139,7 @@ function FormInput_select(params) {
     this.panel = params.panel;
     this.id = params.id;
     this.parent = params.parent;
+    this.elem = params.elem;
     this.index = params.index;
     this.obj = $("<div>", {
         class: "editor-form-select",
@@ -103,10 +161,10 @@ function FormInput_select(params) {
     this.select.append(this.options);
     this.obj
             .append(this.label)
-            .append(this.select)
+            .append(this.select);
 
     this.set = function () {
-        switch (params.parentValue.name) {
+        switch (this.parentValue.name) {
             case 'Тип элемента':
                 this.panel.obj.html("");
                 for (let i = this.parent.childs.length-1; i > this.index; i--) {
@@ -130,9 +188,10 @@ function FormInput_select(params) {
                 this.parent.childs[this.index+1].wrapper.after(this.parent.childs[this.index+2].wrapper);
                 this.panel.elem.unselect();
                 break;
+            case 'Тип заголовка':
+                //this.elem.obj[0].outerHTML = this.elem.obj[0].outerHTML.replace(/(?<=h)\d/gm, 1);
         }
-    }
-
+    };
    /*  this.input.on("click", $.proxy(function () {
         this.setProps();
     }, this.panel)) */
@@ -154,7 +213,7 @@ function FormInput_submit(params) {
 
     this.input.on("click", $.proxy(function () {
         this.setProps();
-    }, this.panel))
+    }, this.panel));
 }
 
 function FormInput_saveJSON(params) {
@@ -173,7 +232,7 @@ function FormInput_saveJSON(params) {
 
     this.input.on("click", $.proxy(function () {
         this.saveJSON();
-    }, this.panel.editor))
+    }, this.panel.editor));
 }
 
 function FormInput_openJSON(params) {
@@ -192,7 +251,7 @@ function FormInput_openJSON(params) {
 
     this.input.on("click", $.proxy(function () {
         this.openJSON();
-    }, this.panel.editor))
+    }, this.panel.editor));
 }
 
 function FormInput_saveProject(params) {
@@ -213,7 +272,7 @@ function FormInput_saveProject(params) {
         this.panel.setProps();
         this.saveJSON();
         this.saveHTML();
-    }, this.panel.editor))
+    }, this.panel.editor));
 }
 
 function FormInput_toProjectPage(params) {
@@ -231,6 +290,31 @@ function FormInput_toProjectPage(params) {
     this.obj.append(this.input);
 
     this.input.on("click", $.proxy(function () {
-        window.location.href = "./"
-    }, this.panel.editor))
+        window.location.href = "./";
+    }, this.panel.editor));
+}
+
+function FormInput_deleteElem(params) {
+    this.parentValue = params.parentValue;
+    this.panel = params.panel;
+    this.id = params.id;
+    this.obj = $("<div>", {
+        class: "editor-form-submit",
+    });
+    this.input = $("<input>", {
+        type: "button",
+        id: "editor-field-" + this.id,
+        value: this.parentValue.name
+    });
+    this.obj.append(this.input);
+
+    this.input.on("click", $.proxy(function () {
+        this.panel.obj.html("");
+        for (let i = this.page.childs.length-1; i > params.index; i--) {
+            this.page.childs[i].index -= 2;
+        }
+        this.page.childs[params.index-1].wrapper[0].remove();
+        this.page.childs[params.index].wrapper[0].remove();
+        this.page.childs.splice(params.index-1,2);  
+    }, this.panel.editor));
 }

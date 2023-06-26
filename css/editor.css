@@ -12,18 +12,16 @@
     width: 300px;
 }
 
-.editor-panel-off {
-    
-}
+.editor-panel-off {}
 
 .editor-elem-wrapper.editor-elem-type-page {
     flex-grow: 1;
     margin: 2px;
     padding: 2px;
-    
+
 }
 
-.editor-elem-type-page > .editor-elem-obj {
+.editor-elem-type-page>.editor-elem-obj {
     height: 100%;
     background-color: beige;
     overflow: scroll;
@@ -36,14 +34,28 @@
 .editor-elem-wrapper.editor-elem-selected {
     border: 2px dashed #b00;
 }
+
 .editor-elem-type-new {
+  /*   position: absolute;
+    z-index: 2; */
     width: 100px;
     height: 50px;
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
 }
-.editor-elem-type-new > .editor-elem-obj {
+
+.editor-elem-type-new>.editor-elem-obj {
     min-height: 46px;
     min-width: 50px;
     border: 1px solid #3f3;
     background-color: #9f9;
+}
+.column-center {
+    /* max-width: 1300px; */
+    width: 100%;
+    padding: 20px 70px;
+    margin: 0 auto;
 }

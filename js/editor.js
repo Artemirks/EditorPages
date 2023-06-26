@@ -186,6 +186,7 @@ function EditorPanel(params) {
 }
 
 function EditorElem(params) {
+    console.log(params);
     this.editor = params.editor;
     this.type = params.type;
     this.parent = params.parent;
@@ -197,9 +198,16 @@ function EditorElem(params) {
     });
     this.wrapper[0].elem = this;
 
-    this.obj = $(editorTypes[this.type].html, {
-        class: "editor-elem-obj"
-    });
+    if (editorTypes[this.type].childs) {
+        this.obj = $(editorTypes[this.type].html, {
+            class: "editor-elem-obj column-center"
+        });
+    } else {
+        this.obj = $(editorTypes[this.type].html, {
+            class: "editor-elem-obj"
+        });
+    }
+    
     for (let key in editorTypes[this.type].props) {
         let className = "EditorProperty_" + editorTypes[this.type].props[key];
         this.props[editorTypes[this.type].props[key]] = new window[className]({
@@ -208,7 +216,9 @@ function EditorElem(params) {
     }
     if (params.json != undefined && params.json.props != undefined) {
         for (let key in params.json.props) {
+            console.log(this.props);
             if (this.props[params.json.props[key].type] != undefined) {
+                
                 this.props[params.json.props[key].type].values = params.json.props[key].values;
             }
         }

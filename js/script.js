@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
 	$("#newProject").click(function () {
 		$('.popup-fade').fadeIn();
@@ -51,37 +50,51 @@ $(document).ready(function () {
 				$(".card-body")[i].remove();
 			}
 			$(this).parent().append($('<div>', {
-				"class": "card-body"
-			})
-				.append($("<form>", {
-					"id": "formDownload",
-					"style": "display: inline-block; margin-right: 20px",
-					"submit": function (e) {
-						e.preventDefault();
-						$.when($.ajax({
-							url: `${window.location.pathname}php/ManageProjects.php`,
-							method: "post",
-							dataType: 'json',
-							data: $(this).serialize(),
-							success: function (data) {
-								location.href = data.zipPath;
-							}
-						})).then(
-							function (data) {
-								$.ajax({
-									url: `${window.location.pathname}php/ManageProjects.php`,
-									method: "post",
-									data: {
-										"nameDownloadProject": data.zipPath,
-										"isAlreadyDownload": true
-									}
-								});
-
-							}, function() {
-								alert('Ошибка скачивания');
-							});
-					}
+					"class": "card-body"
 				})
+				.append($("<form>", {
+						"id": "formDownload",
+						"style": "display: inline-block; margin-right: 20px",
+						"submit": function (e) {
+							e.preventDefault();
+							$.ajax({
+								url: `${window.location.pathname}php/ManageProjects.php`,
+								method: "post",
+								dataType: 'json',
+								data: {
+									"nameDownloadProject": $(this)[0][0].value,
+									"editorPath": $(this)[0][1].value,
+								},
+								success: function (data) {
+									let link = $("<a>", {
+										href: data.zipPath,
+										download: data.zipPath.match(/[^\/]*\..*/m)[0],
+										css: {
+											display: 'none'
+										}
+									});
+									$("body").append(link);
+									link.get(0).click();
+									link.remove();
+								}
+							}).done(
+								function (data) {
+									$.ajax({
+										url: `${window.location.pathname}php/ManageProjects.php`,
+										method: "post",
+										data: {
+											"nameDownloadProject": data.zipPath,
+											"isAlreadyDownload": true
+										}
+									});
+
+								})
+								.fail(function (data) {
+									console.log(data)
+									alert('Ошибка скачивания');
+								});
+						}
+					})
 					.append($("<input>", {
 						"type": "hidden",
 						"name": "nameDownloadProject",
@@ -98,12 +111,12 @@ $(document).ready(function () {
 						"value": "Скачать"
 					})))
 				.append($("<form>", {
-					"id": "formEditor",
-					"style": "display: inline-block; margin-right: 20px",
-					"method": "POST",
-					"action": `${window.location.pathname}editorProject.php`
+						"id": "formEditor",
+						"style": "display: inline-block; margin-right: 20px",
+						"method": "POST",
+						"action": `${window.location.pathname}editorProject.php`
 
-				})
+					})
 					.append($("<input>", {
 						"type": "hidden",
 						"name": "nameEditProject",
@@ -115,23 +128,23 @@ $(document).ready(function () {
 						"value": "Редактировать"
 					})))
 				.append($("<form>", {
-					"id": "formDelete",
-					"style": "display: inline-block; margin-right: 20px",
-					"submit": function (e) {
-						e.preventDefault();
-						if (confirm("Вы уверены? Это действие нельзя отменить")) {
-							$.ajax({
-								url: `${window.location.pathname}php/ManageProjects.php`,
-								method: "post",
-								dataType: 'json',
-								data: $(this).serialize(),
-								success: function (data) {
-									window.location.href = data.nextPage;
-								}
-							});
+						"id": "formDelete",
+						"style": "display: inline-block; margin-right: 20px",
+						"submit": function (e) {
+							e.preventDefault();
+							if (confirm("Вы уверены? Это действие нельзя отменить")) {
+								$.ajax({
+									url: `${window.location.pathname}php/ManageProjects.php`,
+									method: "post",
+									dataType: 'json',
+									data: $(this).serialize(),
+									success: function (data) {
+										window.location.href = data.nextPage;
+									}
+								});
+							}
 						}
-					}
-				})
+					})
 					.append($("<input>", {
 						"type": "hidden",
 						"name": "nameDeleteProject",

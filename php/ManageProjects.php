@@ -163,7 +163,7 @@ if (isset($_POST['dataJSON'])) {
 if (isset($_POST['nameDownloadProject'])) {
 
     if (isset($_POST['isAlreadyDownload'])) {
-        //unlink($_SERVER['DOCUMENT_ROOT'] . $_POST['nameDownloadProject']);
+        unlink($_SERVER['DOCUMENT_ROOT'] . $_POST['nameDownloadProject']);
     } else {
         header('Content-Type: application/json');
 

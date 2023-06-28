@@ -177,6 +177,7 @@ function EditorPanel(params) {
                 }
             }
         }
+        console.log(this.fields);
         for (let key in this.fields) {
             if (typeof this.fields[key].set == "function" && this.fields[key].parentValue.name != 'Тип элемента') {
                 this.fields[key].set();
@@ -186,7 +187,6 @@ function EditorPanel(params) {
 }
 
 function EditorElem(params) {
-    console.log(params);
     this.editor = params.editor;
     this.type = params.type;
     this.parent = params.parent;
@@ -216,7 +216,6 @@ function EditorElem(params) {
     }
     if (params.json != undefined && params.json.props != undefined) {
         for (let key in params.json.props) {
-            console.log(this.props);
             if (this.props[params.json.props[key].type] != undefined) {
                 
                 this.props[params.json.props[key].type].values = params.json.props[key].values;

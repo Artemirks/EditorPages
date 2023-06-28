@@ -175,7 +175,7 @@ function FormInput_select(params) {
                 this.parent.childs[this.index+1] =  new EditorElem({
                     editor: this.parent.editor,
                     parent: this.parent,
-                    type: "header",
+                    type: this.select[0].value.toLowerCase(),
                     index: this.index+1
                 });
                 this.panel.elem.wrapper.after(this.parent.childs[this.index+1].wrapper);
@@ -189,7 +189,10 @@ function FormInput_select(params) {
                 this.panel.elem.unselect();
                 break;
             case 'Тип заголовка':
-                //this.elem.obj[0].outerHTML = this.elem.obj[0].outerHTML.replace(/(?<=h)\d/gm, 1);
+                let numberHeader = this.select[0].value.match(/\d/m);
+                if (this.elem.obj[0].innerHTML != '') {
+                    this.elem.obj[0].outerHTML =  this.elem.obj[0].outerHTML.replace(/(?<=h)\d/gm, numberHeader);
+                }
         }
     };
    /*  this.input.on("click", $.proxy(function () {

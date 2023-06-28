@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['DOCUMENT_ROOT'] .$_SERVER['REQUEST_URI'] . 'php/ListProjects.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . $_SERVER['REQUEST_URI'] . 'php/ListProjects.php');
 $manage = new ListProjects();
 if (!is_dir("Projects")) {
     mkdir("Projects");
@@ -36,8 +36,8 @@ if (!is_dir("Projects")) {
             foreach ($projects as $project) {
                 echo "
             <div class=\"card\">
-                <div class=\"card-header\">".
-                    $project['name']."</div>
+                <div class=\"card-header\">" .
+                    escape($project['name']) . "</div>
             </div>
                     ";
             }
@@ -50,11 +50,11 @@ if (!is_dir("Projects")) {
             <label for="nameProject">Введите имя проекта</label>
             <form id="formCreator" method="POST">
                 <input type="hidden" name="nextPage" value="<?php
-                    echo $_SERVER['REQUEST_URI']
-                ?>">
+                                                            echo $_SERVER['REQUEST_URI']
+                                                            ?>">
                 <input type="hidden" name="editorPath" value="<?php
-                    echo $_SERVER['REQUEST_URI']
-                ?>">
+                                                                echo $_SERVER['REQUEST_URI']
+                                                                ?>">
                 <input id="nameProject" name="nameCreateProject" type="text">
                 <input class="btn btn-success" id="createProject" type="submit" value="Создать">
             </form>
@@ -63,3 +63,10 @@ if (!is_dir("Projects")) {
 </body>
 
 </html>
+
+<?php
+function escape($string)
+{
+    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+}
+?>

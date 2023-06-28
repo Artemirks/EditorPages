@@ -49,7 +49,7 @@ function EditorProperty_elemText(params) {
 }
 
 function EditorProperty_backgroundColor(params) {
-    
+
     this.elem = params.elem;
     this.values = {};
     this.values.color = {
@@ -61,7 +61,7 @@ function EditorProperty_backgroundColor(params) {
         return {
             type: "backgroundColor",
             values: this.values
-        };  
+        };
     };
 }
 
@@ -77,12 +77,12 @@ function EditorProperty_textColor(params) {
         return {
             type: "textColor",
             values: this.values
-        };  
+        };
     };
 }
 
 function EditorProperty_elements(params) {
-    
+
     this.elem = params.elem;
     this.values = {};
     this.values.elements = {
@@ -107,7 +107,7 @@ function EditorProperty_elements(params) {
 }
 
 function EditorProperty_typeHeader(params) {
-    
+
     this.elem = params.elem;
     this.values = {};
     this.values.elements = {
@@ -140,7 +140,7 @@ function EditorProperty_typeHeader(params) {
         return {
             type: "typeHeader",
             values: this.values
-        };  
+        };
     };
 }
 

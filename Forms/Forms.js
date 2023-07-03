@@ -56,9 +56,9 @@ function FormInput_textarea(params) {
             text: this.parentValue.name,
             for: "editor-field-" + this.id,
         })
-        .css({
-            "margin-right": "15px"
-        });
+            .css({
+                "margin-right": "15px"
+            });
         this.input = $("<textarea>", {
             id: "editor-field-" + this.id,
             rows: 2,
@@ -111,7 +111,7 @@ function FormInput_color(params) {
     }
 
     this.set = function () {
-       
+
         switch (this.parentValue.name) {
             case 'Цвет':
                 if (params.id != undefined) {
@@ -152,52 +152,56 @@ function FormInput_select(params) {
         for: "editor-field-" + this.id
     });
     this.options = [];
-    for (let i = 0; i <this.parentValue.values.length; i++) {
+    for (let i = 0; i < this.parentValue.value.length; i++) {
         this.options[i] = $("<option>", {
-            label: this.parentValue.values[i].name,
-            value: this.parentValue.values[i].type
+            label: this.parentValue.value[i].name,
+            value: this.parentValue.value[i].type
         });
-    } 
+    }
     this.select.append(this.options);
     this.obj
-            .append(this.label)
-            .append(this.select);
+        .append(this.label)
+        .append(this.select);
 
     this.set = function () {
         switch (this.parentValue.name) {
             case 'Тип элемента':
                 this.panel.obj.html("");
-                for (let i = this.parent.childs.length-1; i > this.index; i--) {
+                for (let i = this.parent.childs.length - 1; i > this.index; i--) {
                     this.parent.childs[i].index += 2;
                     this.parent.childs[this.parent.childs[i].index] = this.parent.childs[i];
                 }
 
-                this.parent.childs[this.index+1] =  new EditorElem({
+                this.parent.childs[this.index + 1] = new EditorElem({
                     editor: this.parent.editor,
                     parent: this.parent,
                     type: this.select[0].value.toLowerCase(),
-                    index: this.index+1
+                    index: this.index + 1
                 });
-                this.panel.elem.wrapper.after(this.parent.childs[this.index+1].wrapper);
-                this.parent.childs[this.index+2] =  new EditorElem({
+                this.panel.elem.wrapper.after(this.parent.childs[this.index + 1].wrapper);
+                this.parent.childs[this.index + 2] = new EditorElem({
                     editor: this.parent.editor,
                     parent: this.parent,
                     type: "new",
-                    index: this.index+2
+                    index: this.index + 2
                 });
-                this.parent.childs[this.index+1].wrapper.after(this.parent.childs[this.index+2].wrapper);
+                this.parent.childs[this.index + 1].wrapper.after(this.parent.childs[this.index + 2].wrapper);
                 this.panel.elem.unselect();
                 break;
             case 'Тип заголовка':
                 let numberHeader = this.select[0].value.match(/\d/m);
                 if (this.elem.obj[0].innerHTML != '') {
-                    this.elem.obj[0].outerHTML =  this.elem.obj[0].outerHTML.replace(/(?<=h)\d/gm, numberHeader);
+                    const oldElement = $(this.elem.obj[0]);
+                    const newElement = $('<h' + numberHeader + '>').html(oldElement.html()).attr('style', oldElement.attr('style'))
+                        .addClass(oldElement.attr('class'));
+                    oldElement.replaceWith(newElement);
+                    this.elem.obj[0] = newElement[0];
                 }
         }
     };
-   /*  this.input.on("click", $.proxy(function () {
-        this.setProps();
-    }, this.panel)) */
+    /*  this.input.on("click", $.proxy(function () {
+         this.setProps();
+     }, this.panel)) */
 }
 
 function FormInput_submit(params) {
@@ -313,11 +317,11 @@ function FormInput_deleteElem(params) {
 
     this.input.on("click", $.proxy(function () {
         this.panel.obj.html("");
-        for (let i = this.page.childs.length-1; i > params.index; i--) {
+        for (let i = this.page.childs.length - 1; i > params.index; i--) {
             this.page.childs[i].index -= 2;
         }
-        this.page.childs[params.index-1].wrapper[0].remove();
+        this.page.childs[params.index - 1].wrapper[0].remove();
         this.page.childs[params.index].wrapper[0].remove();
-        this.page.childs.splice(params.index-1,2);  
+        this.page.childs.splice(params.index - 1, 2);
     }, this.panel.editor));
 }

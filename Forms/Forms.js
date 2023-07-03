@@ -155,7 +155,8 @@ function FormInput_select(params) {
     for (let i = 0; i < this.parentValue.value.length; i++) {
         this.options[i] = $("<option>", {
             label: this.parentValue.value[i].name,
-            value: this.parentValue.value[i].type
+            value: this.parentValue.value[i].type,
+            selected: this.parentValue.value[i].selected
         });
     }
     this.select.append(this.options);
@@ -189,14 +190,19 @@ function FormInput_select(params) {
                 this.panel.elem.unselect();
                 break;
             case 'Тип заголовка':
-                let numberHeader = this.select[0].value.match(/\d/m);
-                if (this.elem.obj[0].innerHTML != '') {
-                    const oldElement = $(this.elem.obj[0]);
-                    const newElement = $('<h' + numberHeader + '>').html(oldElement.html()).attr('style', oldElement.attr('style'))
-                        .addClass(oldElement.attr('class'));
-                    oldElement.replaceWith(newElement);
-                    this.elem.obj[0] = newElement[0];
+                let numberHeader = this.select[0].value;
+                for (let i = 0; i < this.parentValue.value.length; i++) {
+                    if (this.parentValue.value[i].type == numberHeader) {
+                        this.parentValue.value[i].selected = true;
+                    } else {
+                        this.parentValue.value[i].selected = false;
+                    }
                 }
+                const oldElement = $(this.elem.obj[0]);
+                const newElement = $('<' + numberHeader + '>').html(oldElement.html()).attr('style', oldElement.attr('style'))
+                    .addClass(oldElement.attr('class'));
+                oldElement.replaceWith(newElement);
+                this.elem.obj[0] = newElement[0];
         }
     };
     /*  this.input.on("click", $.proxy(function () {

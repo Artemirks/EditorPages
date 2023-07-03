@@ -1,15 +1,24 @@
+
+/* Базовый объект свойств
+    Аргументы:
+    params - параметры элемента (elem - выбранный объект для изменения),
+    functionName - имя функции свойства,
+    type - тип input для свойства,
+    name - label для input,
+    value - значение по умолчанию
+*/
+
 function EditorProperty(params, functionName, type, name, value = "") {
     const obj = {
         elem: params.elem,
         values: {},
         getJSON() {
-            console.log(value);
             if (typeof value === "boolean") {
                 return false;
             }
             return {
                 type: functionName.match(/EditorProperty_(\w+)/)[1],
-                values: this.values,
+                values: this.values
             };
         },
     };
@@ -26,11 +35,11 @@ function EditorProperty_name(params) {
 }
 
 function EditorProperty_title(params) {
-    return EditorProperty(params, EditorProperty_title.name, "string", "Title", params.elem.type);
+    return EditorProperty(params, EditorProperty_title.name, "string", "Title");
 }
 
 function EditorProperty_elemText(params) {
-    return EditorProperty(params, EditorProperty_elemText.name, "textarea", "ElemText", params.elem.type);
+    return EditorProperty(params, EditorProperty_elemText.name, "textarea", "ElemText");
 }
 
 function EditorProperty_backgroundColor(params) {
@@ -48,9 +57,10 @@ function EditorProperty_elements(params) {
             name: "Заголовок",
         },
         {
-            type: "test",
-            name: "Тест",
+            type: "Paragraph",
+            name: "Параграф",
         },
+        
     ]);
 }
 
@@ -74,6 +84,8 @@ function EditorProperty_typeHeader(params) {
         },
     ]);
 }
+
+//Для свойств, которые не должны сохраняться в JSON в качестве аргумента передаем false
 
 function EditorProperty_submit(params) {
     return EditorProperty(params, EditorProperty_submit.name, "submit", "Применить", false);

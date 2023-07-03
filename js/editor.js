@@ -8,7 +8,10 @@
 })($);
 var editorTypes = {};
 
-
+/* Объект редактора
+    Аргументы:
+    - params - параметры проекта и редактора (obj - div редактора, nameProject - имя выбранного проекта)
+*/
 function Editor(params) {
     this.obj = $(params.obj);
     this.nameProject = params.nameProject;
@@ -19,7 +22,7 @@ function Editor(params) {
     params.obj.editor = this;
 
     if (params.nameProject == undefined) {
-        this.page = new EditorElem({
+        this.page = new EditorElem({ //создание элемента страницы
             editor: this,
             type: "page",
             parent: this,
@@ -28,11 +31,11 @@ function Editor(params) {
         this.obj.append(this.page.wrapper);
     }
 
-    this.panel = new EditorPanel({
+    this.panel = new EditorPanel({ //создание объекта панели со свойствами 
         editor: this
     });
 
-    this.obj.on("click", $.proxy(function (event) {
+    this.obj.on("click", $.proxy(function (event) { //обработка клика по элементу (выделение и показ его свойств)
 
         let clcikObj = $(event.target).closest(".editor-elem-wrapper");
         if (clcikObj.length == 1) {
@@ -50,15 +53,7 @@ function Editor(params) {
         }
     }, this));
 
-    this.saveJSON = function () {
-        /*  const a = document.createElement("a");
-         a.href = URL.createObjectURL(new Blob([JSON.stringify(this.page.getJSON(), null, 2)], {
-             type: "text/plain"
-         }));
-         a.setAttribute("download", "data.json");
-         document.body.appendChild(a);
-         a.click();
-         document.body.removeChild(a); */
+    this.saveJSON = function () { //метод сохранения JSON проекта
         $.ajax({
             url: `${window.location.pathname.match(/.*\//gm)}php/ManageProjects.php`,
             method: "post",
@@ -73,7 +68,7 @@ function Editor(params) {
         });
     };
 
-    this.loadJSON = function () {
+    this.loadJSON = function () { //загрузка JSON файла со структурой проекта
         $.ajax({
             url: `${window.location.pathname.match(/.*\//gm)}Projects/${this.nameProject}/data.json`,
             context: this,
@@ -81,9 +76,7 @@ function Editor(params) {
         }).done(this.openJSON);
     };
 
-    this.openJSON = function (elements) {
-        /* this.page.wrapper.remove();
-        this.panel.obj.html(""); */
+    this.openJSON = function (elements) {//востановление структуры проекта из файла JSON
         this.page = new EditorElem({
             editor: this,
             type: "page",
@@ -96,13 +89,15 @@ function Editor(params) {
         this.panel.setAllProps();
     };
 
-    this.getHTML = function () {
+    this.getHTML = function () { //Получение html кода страницы
         let content = this.page.wrapper[0].outerHTML.replace(/editor-elem-wrapper\s|\seditor-elem-selected|<div[^>]+class="[^>]*new[^>]*"[^>]*>.*?<\/div><\/div>/gm, '');
         content = content.replace(/></gm, '>\n<');
+        const removedDivs = $(content).find('div[class^="editor-elem-type"').removeClassWild('editor-elem-type-*');
+        content = $(content).not(removedDivs).prop('outerHTML');
         return content;
     };
 
-    this.saveHTML = function () {
+    this.saveHTML = function () { //сохранение html кода страницы в файл index.php в папке выбранного проекта
         $.ajax({
             url: `${window.location.pathname.match(/.*\//gm)}php/CreatePage.php`,
             method: "post",
@@ -117,16 +112,21 @@ function Editor(params) {
 
 }
 
+/* Объект панели со свойствами для редактирования
+    Аргументы:
+    - params (editor - экземпляр объекта редактора)
+    */
+
 function EditorPanel(params) {
     this.editor = params.editor;
     this.status = true;
     this.fields = [];
     this.obj = $("<div>", {
-        class: "editor-panel editor-panel-on"
+        class: "editor-panel editor-panel-on" //зачем on, панель должна выдвигаться (?)
     });
     this.editor.obj.append(this.obj);
 
-    this.drawProps = function (params) {
+    this.drawProps = function (params) { //отрисовка свойств формы
         this.fields = [];
         this.elem = params.elem;
 
@@ -150,7 +150,7 @@ function EditorPanel(params) {
         }
     };
 
-    this.setProps = function () {
+    this.setProps = function () { //зачем ??
         for (let key in this.fields) {
             if (typeof this.fields[key].set == "function") {
                 this.fields[key].set();
@@ -158,7 +158,7 @@ function EditorPanel(params) {
         }
     };
 
-    this.setAllProps = function () {
+    this.setAllProps = function () { //установка всех значений из полей свойств, по факту часть кода похожа на drawProps (создание форм), поэтому надо подумать над оптимизацией
         this.fields = [];
         let fieldsNumber = 0;
         for (let i = 0; i < this.editor.elements.length; i++) {
@@ -177,15 +177,27 @@ function EditorPanel(params) {
                 }
             }
         }
-        console.log(this.fields);
         for (let key in this.fields) {
             if (typeof this.fields[key].set == "function" && this.fields[key].parentValue.name != 'Тип элемента') {
-                this.fields[key].set();
+                this.fields[key].set(); //установка значения, метод set из Forms.js
             }
         }
     };
 }
 
+/*
+    Объекта элемента на странице
+    Аргументы:
+    - params (
+        editor - экземпляр объекта редактора
+        index - порядковый номер элемента на странице
+        json - объект, который содержит:
+            - массив childs - ссылки на дочерние элементы
+            - type - тип элемента
+            - props - Массив, который содержит объекты свойств со значениями
+        parent - ссылка на родительский элемент, для элемента page родительским является объект редактора
+    )
+*/
 function EditorElem(params) {
     this.editor = params.editor;
     this.type = params.type;
@@ -200,7 +212,7 @@ function EditorElem(params) {
 
     if (editorTypes[this.type].childs) {
         this.obj = $(editorTypes[this.type].html, {
-            class: "editor-elem-obj column-center"
+            class: "editor-elem-obj column-center" //точно ли тут нужен column-center, думаю что нет
         });
     } else {
         this.obj = $(editorTypes[this.type].html, {
@@ -209,7 +221,7 @@ function EditorElem(params) {
     }
 
     for (let key in editorTypes[this.type].props) {
-        let className = "EditorProperty_" + editorTypes[this.type].props[key];
+        let className = "EditorProperty_" + editorTypes[this.type].props[key]; //получение свойств элемента
         this.props[editorTypes[this.type].props[key]] = new window[className]({
             elem: this
         });
@@ -218,14 +230,14 @@ function EditorElem(params) {
         for (let key in params.json.props) {
             if (this.props[params.json.props[key].type] != undefined) {
 
-                this.props[params.json.props[key].type].values = params.json.props[key].values;
+                this.props[params.json.props[key].type].values = params.json.props[key].values; //получение значений свойств элемента
             }
         }
     }
     if (params.json != undefined && params.json.childs.length != 0) {
         for (let key in params.json.childs) {
             let i = this.childs.length;
-            this.childs[i] = new EditorElem({
+            this.childs[i] = new EditorElem({ //если у элемента есть дети, то создаем объекты дочерних элементов
                 editor: this.editor,
                 parent: this,
                 index: i,
@@ -237,14 +249,14 @@ function EditorElem(params) {
     }
     else {
         if ((params.json == undefined || this.type == 'new') && typeof editorElementsMethods[this.type] == "function") {
-            editorElementsMethods[this.type]({
+            editorElementsMethods[this.type]({ //отрисовка блока добавления элементов
                 element: this
             });
         }
     }
 
     this.wrapper.append(this.obj);
-    this.changeClass = function (params) {
+    this.changeClass = function (params) { //метод изменения класса
         this.type = params.type;
         this.wrapper
             .removeClassWild("editor-elem-type-*")
@@ -254,14 +266,14 @@ function EditorElem(params) {
         type: this.type
     });
 
-    this.select = function () {
+    this.select = function () { //отрисовка красной рамки при выделении элемента
         this.wrapper.addClass("editor-elem-selected");
     };
-    this.unselect = function () {
+    this.unselect = function () { //снятие красной рамки
         this.wrapper.removeClass("editor-elem-selected");
     };
 
-    this.getJSON = function () {
+    this.getJSON = function () { //формирование JSON с данными о свойствах элемента
         let out = {
             type: this.type,
 

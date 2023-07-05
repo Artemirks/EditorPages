@@ -27,6 +27,10 @@
     overflow: scroll;
 }
 
+.editor-elem-wrapper {
+    display: block;
+}
+
 .editor-elem-wrapper:not(.editor-elem-selected) {
     border: 2px dashed #0000;
 }

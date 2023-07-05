@@ -256,6 +256,7 @@ function EditorElem(params) {
     }
 
     this.wrapper.append(this.obj);
+    setTimeout(() => this.wrapper.css('display', this.obj.css('display')) , 50);
     this.changeClass = function (params) { //метод изменения класса
         this.type = params.type;
         this.wrapper

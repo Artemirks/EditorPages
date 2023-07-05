@@ -199,10 +199,23 @@ function FormInput_select(params) {
                     }
                 }
                 const oldElement = $(this.elem.obj[0]);
+
                 const newElement = $('<' + numberHeader + '>').html(oldElement.html()).attr('style', oldElement.attr('style'))
-                    .addClass(oldElement.attr('class'));
+                    .addClass(oldElement.attr('class')).attr('contenteditable', true)
                 oldElement.replaceWith(newElement);
                 this.elem.obj[0] = newElement[0];
+                break;
+            case 'display':
+                let type = this.select[0].value;
+                for (let i = 0; i < this.parentValue.value.length; i++) {
+                    if (this.parentValue.value[i].type == type) {
+                        this.parentValue.value[i].selected = true;
+                    } else {
+                        this.parentValue.value[i].selected = false;
+                    }
+                }
+                this.elem.obj.css("display", type);
+                break;
         }
     };
     /*  this.input.on("click", $.proxy(function () {

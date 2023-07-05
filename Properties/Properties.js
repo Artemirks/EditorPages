@@ -85,6 +85,31 @@ function EditorProperty_typeHeader(params) {
     ]);
 }
 
+function EditorProperty_typeDisplay(params) {
+    return EditorProperty(params, EditorProperty_typeHeader.name, "select", "display", [
+        {
+            type: "block",
+            name: "block",
+        },
+        {
+            type: "inline",
+            name: "inline",
+        },
+        {
+            type: "inline-block",
+            name: "inline-block",
+        },
+        {
+            type: "flex",
+            name: "flex",
+        },
+        {
+            type: "table",
+            name: "table",
+        },
+    ]);
+}
+
 //Для свойств, которые не должны сохраняться в JSON в качестве аргумента передаем false
 
 function EditorProperty_submit(params) {

@@ -1,5 +1,5 @@
 editorTypes.header = { //описание объекта, свойства для инициализации объекта
-    "html": "<h1></h1>",
+    "html": "<h1 contenteditable></h1>",
     "childs": false,
     "props": ["name", "typeHeader", "elemText", "textColor", "submit", "deleteElem"]
 }

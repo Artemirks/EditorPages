@@ -1,5 +1,5 @@
 editorTypes.paragraph = { //описание объекта, свойства для инициализации объекта
-    "html": "<p></p>",
+    "html": "<p contenteditable></p>",
     "childs": false,
     "props": ["name", "elemText", "textColor", "submit", "deleteElem"]
 }

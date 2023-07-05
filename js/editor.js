@@ -162,6 +162,7 @@ function EditorPanel(params) {
         this.fields = [];
         let fieldsNumber = 0;
         for (let i = 0; i < this.editor.elements.length; i++) {
+            let elemID = 0;
             this.elem = this.editor.elements[i];
             for (let key in this.editor.elements[i].props) {
                 for (let value in this.editor.elements[i].props[key].values) {
@@ -170,9 +171,11 @@ function EditorPanel(params) {
                         this.fields[fieldsNumber] = new window[className]({
                             parentValue: this.editor.elements[i].props[key].values[value],
                             panel: this,
-                            elem: this.elem
+                            elem: this.elem,
+                            index: this.elem.index
                         });
                         fieldsNumber++;
+                        elemID++;
                     }
                 }
             }

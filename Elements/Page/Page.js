@@ -1,6 +1,24 @@
 editorTypes.page = { //описание объекта
     "html": "<div></div>", //только один тэг
     "childs": true,
+    "possibleChilds": [
+        {
+            type: "Header",
+            name: "Заголовок",
+        },
+        {
+            type: "Paragraph",
+            name: "Параграф",
+        },
+        {
+            type: "Div",
+            name: "Блок div",
+        },
+        {
+            type: "img",
+            name: "Изображение",
+        }
+    ],
     "props": ["name", "title", "backgroundColor", "submit", "saveProject", "toProjectPage"]
 }
 

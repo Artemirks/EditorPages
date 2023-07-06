@@ -207,7 +207,9 @@ function EditorElem(params) {
     this.parent = params.parent;
     this.index = params.index;
     this.childs = [];
+    this.possibleChilds = [];
     this.props = [];
+    this.possibleTypes = [];
     this.wrapper = $("<div>", {
         class: "editor-elem-wrapper"
     });
@@ -217,10 +219,15 @@ function EditorElem(params) {
         this.obj = $(editorTypes[this.type].html, {
             class: "editor-elem-obj column-center" //точно ли тут нужен column-center, думаю что нет
         });
+        this.possibleChilds = editorTypes[this.type].possibleChilds;
     } else {
         this.obj = $(editorTypes[this.type].html, {
             class: "editor-elem-obj"
         });
+    }
+
+    if (editorTypes[this.type].possibleTypes !== undefined) {
+        this.possibleTypes = editorTypes[this.type].possibleTypes; 
     }
 
     for (let key in editorTypes[this.type].props) {
@@ -259,7 +266,13 @@ function EditorElem(params) {
     }
 
     this.wrapper.append(this.obj);
-    setTimeout(() => this.wrapper.css('display', this.obj.css('display')) , 50);
+    setTimeout(() => {
+        if (this.obj.css('display') == 'inline') {
+            this.wrapper.css('display','inline-block')
+        } else {
+            this.wrapper.css('display', this.obj.css('display'))
+        }
+    }, 50);
     this.changeClass = function (params) { //метод изменения класса
         this.type = params.type;
         this.wrapper

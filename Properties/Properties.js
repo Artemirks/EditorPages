@@ -51,17 +51,7 @@ function EditorProperty_textColor(params) {
 }
 
 function EditorProperty_elements(params) {
-    return EditorProperty(params, EditorProperty_elements.name, "select", "Тип элемента", [
-        {
-            type: "Header",
-            name: "Заголовок",
-        },
-        {
-            type: "Paragraph",
-            name: "Параграф",
-        },
-        
-    ]);
+    return EditorProperty(params, EditorProperty_elements.name, "select", "Тип элемента", params.elem.parent.possibleChilds);
 }
 
 function EditorProperty_typeHeader(params) {
@@ -86,29 +76,13 @@ function EditorProperty_typeHeader(params) {
 }
 
 function EditorProperty_typeDisplay(params) {
-    return EditorProperty(params, EditorProperty_typeHeader.name, "select", "display", [
-        {
-            type: "block",
-            name: "block",
-        },
-        {
-            type: "inline",
-            name: "inline",
-        },
-        {
-            type: "inline-block",
-            name: "inline-block",
-        },
-        {
-            type: "flex",
-            name: "flex",
-        },
-        {
-            type: "table",
-            name: "table",
-        },
-    ]);
+    return EditorProperty(params, EditorProperty_typeDisplay.name, "select", "display", params.elem.parent.possibleTypes);
 }
+
+function EditorProperty_fileImage(params) {
+    return EditorProperty(params, EditorProperty_fileImage.name, "file", "Выберите изображение");
+}
+
 
 //Для свойств, которые не должны сохраняться в JSON в качестве аргумента передаем false
 

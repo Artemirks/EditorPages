@@ -141,6 +141,7 @@ function FormInput_color(params) {
 
 function FormInput_select(params) {
     this.parentValue = params.parentValue;
+    const selectedObject = this.parentValue.value.find(obj => obj.selected === true);
     params.isLabel = true;
     this.createInput = function (params) {
         return $("<select>", {
@@ -149,12 +150,22 @@ function FormInput_select(params) {
     }
 
     this.options = [];
-    for (let i = 0; i < this.parentValue.value.length; i++) {
+    if (params.elem.type == 'new' && params.elem.parent.possibleChilds.length != 0) {
+        this.selectValues = params.elem.parent.possibleChilds;
+    } else if (params.elem.possibleTypes.length != 0) {
+        this.selectValues = params.elem.possibleTypes;
+    }
+    for (let i = 0; i < this.selectValues.length; i++) {
         this.options[i] = $("<option>", {
-            label: this.parentValue.value[i].name,
-            value: this.parentValue.value[i].type,
-            selected: this.parentValue.value[i].selected
+            label: this.selectValues[i].name,
+            value: this.selectValues[i].type,
+            //selected: this.parentValue[i].selected
         });
+        if (selectedObject !== undefined) {
+            if (this.options[i][0].value == selectedObject.type) {
+                this.options[i][0].selected = true;
+            }
+        }
     }
 
     this.set = function () {
@@ -228,127 +239,139 @@ function FormInput_select(params) {
     };
 
     FormInput.call(this, params);
-    
+
+}
+
+function FormInput_file(params) {
+    params.isLabel = true;
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "file",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.value,
+            accept: ".jpg, .jpeg, .png"
+        });
+    }
+
+    this.set = function () {
+        const fileInput = this.input[0];
+        if (fileInput.files && fileInput.files[0]) {
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            console.log(formData);
+        }
+
+      /*   const propertyActions = {
+            'Цвет': () => {
+                const value = params.id !== undefined ? this.input.val() : this.parentValue.value;
+                this.elem.obj.css("backgroundColor", value);
+            },
+            'Цвет текста': () => {
+                const value = params.id !== undefined ? this.input.val() : this.parentValue.value;
+                this.elem.obj.css("color", value);
+            }
+        }
+
+        const propertyAction = propertyActions[this.parentValue.name];
+        if (propertyAction) {
+            propertyAction();
+        }
+
+        if (params.id !== undefined) {
+            this.parentValue.value = this.input.val();
+        } */
+    };
+    FormInput.call(this, params);  
 }
 
 function FormInput_submit(params) {
-    this.parentValue = params.parentValue;
-    this.panel = params.panel;
-    this.id = params.id;
-    this.obj = $("<div>", {
-        class: "editor-form-submit",
-    });
-    this.input = $("<input>", {
-        type: "button",
-        id: "editor-field-" + this.id,
-        value: this.parentValue.name
-    });
-    this.obj.append(this.input);
-
-    this.input.on("click", $.proxy(function () {
-        this.setProps();
-    }, this.panel));
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            this.setProps();
+        }, this.panel));
+    }
+    FormInput.call(this, params);
 }
 
 function FormInput_saveJSON(params) {
-    this.parentValue = params.parentValue;
-    this.panel = params.panel;
-    this.id = params.id;
-    this.obj = $("<div>", {
-        class: "editor-form-submit",
-    });
-    this.input = $("<input>", {
-        type: "button",
-        id: "editor-field-" + this.id,
-        value: this.parentValue.name
-    });
-    this.obj.append(this.input);
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            this.saveJSON();
+        }, this.panel.editor));
+    }
 
-    this.input.on("click", $.proxy(function () {
-        this.saveJSON();
-    }, this.panel.editor));
+    FormInput.call(this, params);
 }
 
 function FormInput_openJSON(params) {
-    this.parentValue = params.parentValue;
-    this.panel = params.panel;
-    this.id = params.id;
-    this.obj = $("<div>", {
-        class: "editor-form-submit",
-    });
-    this.input = $("<input>", {
-        type: "button",
-        id: "editor-field-" + this.id,
-        value: this.parentValue.name
-    });
-    this.obj.append(this.input);
+    this.createInput = function(params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            this.openJSON();
+        }, this.panel.editor));
+    }
 
-    this.input.on("click", $.proxy(function () {
-        this.openJSON();
-    }, this.panel.editor));
+    FormInput.call(this, params);
 }
 
 function FormInput_saveProject(params) {
-    this.parentValue = params.parentValue;
-    this.panel = params.panel;
-    this.id = params.id;
-    this.obj = $("<div>", {
-        class: "editor-form-submit",
-    });
-    this.input = $("<input>", {
-        type: "button",
-        id: "editor-field-" + this.id,
-        value: this.parentValue.name
-    });
-    this.obj.append(this.input);
+    this.createInput = function(params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            this.panel.setProps();
+            this.saveJSON();
+            this.saveHTML();
+        }, this.panel.editor));
+    }
 
-    this.input.on("click", $.proxy(function () {
-        this.panel.setProps();
-        this.saveJSON();
-        this.saveHTML();
-    }, this.panel.editor));
+    FormInput.call(this, params);
 }
 
 function FormInput_toProjectPage(params) {
-    this.parentValue = params.parentValue;
-    this.panel = params.panel;
-    this.id = params.id;
-    this.obj = $("<div>", {
-        class: "editor-form-submit",
-    });
-    this.input = $("<input>", {
-        type: "button",
-        id: "editor-field-" + this.id,
-        value: this.parentValue.name
-    });
-    this.obj.append(this.input);
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            window.location.href = "./";
+        }, this.panel.editor));
+    }
 
-    this.input.on("click", $.proxy(function () {
-        window.location.href = "./";
-    }, this.panel.editor));
+    FormInput.call(this, params);
 }
 
 function FormInput_deleteElem(params) {
-    this.parentValue = params.parentValue;
-    this.panel = params.panel;
-    this.id = params.id;
-    this.obj = $("<div>", {
-        class: "editor-form-submit",
-    });
-    this.input = $("<input>", {
-        type: "button",
-        id: "editor-field-" + this.id,
-        value: this.parentValue.name
-    });
-    this.obj.append(this.input);
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            this.panel.obj.html("");
+            for (let i = this.page.childs.length - 1; i > params.index; i--) {
+                this.page.childs[i].index -= 2;
+            }
+            this.page.childs[params.index - 1].wrapper[0].remove();
+            this.page.childs[params.index].wrapper[0].remove();
+            this.page.childs.splice(params.index - 1, 2);
+        }, this.panel.editor));
+    }
 
-    this.input.on("click", $.proxy(function () {
-        this.panel.obj.html("");
-        for (let i = this.page.childs.length - 1; i > params.index; i--) {
-            this.page.childs[i].index -= 2;
-        }
-        this.page.childs[params.index - 1].wrapper[0].remove();
-        this.page.childs[params.index].wrapper[0].remove();
-        this.page.childs.splice(params.index - 1, 2);
-    }, this.panel.editor));
+    FormInput.call(this, params);
 }

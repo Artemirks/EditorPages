@@ -15,18 +15,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Конструктор</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/editor.css?v1">
     <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="js/editor.js?v1"></script>
-    <script src="Properties/Properties.js?v1"></script>
-    <script src="Forms/Forms.js?v1"></script>
+    <script src="js/editor.js?v4"></script>
+    <script src="Properties/Properties.js?v7"></script>
+    <script src="Forms/Forms.js?v=6"></script>
 <?php
     $elements = $editor->getElements();
     foreach( $elements as $elem ) 
     {
         if (array_key_exists('js', $elem) && $elem[ "js" ] != null ) {
             echo "
-    <script src=\"{$elem[ "js" ]}\"></script>
+    <script src=\"{$elem[ "js" ]}?v=3\"></script></script>
         ";
         }
         if (array_key_exists('css', $elem) && $elem[ "css" ] != null ) {

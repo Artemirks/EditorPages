@@ -1,7 +1,8 @@
 <?php
 class WorkingWithMedia
 {
-    function uploadFile($fileInputName, $targetDirectory) {
+    function uploadFile($fileInputName, $targetDirectory)
+    {
         if (isset($_FILES) && isset($_FILES[$fileInputName])) {
             $uploadedFile = $_FILES[$fileInputName];
 
@@ -10,57 +11,77 @@ class WorkingWithMedia
             }
 
             $tempFilePath = $uploadedFile['tmp_name'];
-            $targetFilePath = $targetDirectory . '/' . basename($uploadedFile);
+            $newFilePath = $this->generateUniqueFileName($targetDirectory, $uploadedFile['name']);
+            $targetFilePath = $targetDirectory . '/' . $newFilePath;
+            if (move_uploaded_file($tempFilePath, $targetFilePath)) {
+                chmod($targetFilePath, 0664);
+                return $newFilePath;
+            } else {
+                return false;
+            }
+        }
+    }
+    private function generateUniqueFileName($targetDirectory, $originalFileName)
+    {
+        $fileName = basename($originalFileName);
+        $targetFilePath = $targetDirectory . '/' . $fileName;
+        $counter = 1;
+        while (file_exists($targetFilePath)) {
+            $fileName = $counter . '_' . basename($originalFileName);
+            $targetFilePath = $targetDirectory . '/' . $fileName;
+            $counter++;
+        }
+        return $fileName;
+    }
+
+    public function deleteFile($filePath)
+    {
+        if (file_exists($filePath)) {
+            if (unlink($filePath)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 }
 
-//$workingWithMedia = new WorkingWithMedia();
+function sanitazeInput($input)
+{
+    $output = trim($input);
+    $output = stripslashes($output);
+    $output = htmlspecialchars($output, ENT_QUOTES, 'UTF-8');
 
-if (isset($_POST['nameCreateProject'])) {
-    header('Content-Type: application/json');
-
-    $result = array(
-        'isDirCreate'  => $manage->createProject(),
-        'nextPage' => $_POST['nextPage']
-    );
-
-    echo json_encode($result);
+    return $output;
 }
-
-if (isset($_POST['nameDeleteProject'])) {
-    header('Content-Type: application/json');
-
-    $manage->deleteProject([
-        "deleteDirPath" => $_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath'] . 'Projects/' . $_POST['nameDeleteProject']
-    ]);
-    $result = array(
-        'nextPage' => $_POST['nextPage']
-    );
-
-    echo json_encode($result);
-}
-
-if (isset($_POST['dataJSON'])) {
-
-    $manage->saveProjectsJson([
-        "saveDirPath" => $_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath'] . 'Projects/' . $_POST['nameProject'] . '/data.json'
-    ]);
-}
-
-if (isset($_POST['nameDownloadProject'])) {
-
-    if (isset($_POST['isAlreadyDownload'])) {
-        unlink($_SERVER['DOCUMENT_ROOT'] . $_POST['nameDownloadProject']);
+$workingWithMedia = new WorkingWithMedia();
+if (isset($_POST['deletePath'])) {
+    $filePath = sanitazeInput($_POST['deletePath']);
+    $deleteResult = $workingWithMedia->deleteFile('../Projects/' . sanitazeInput($_POST['projectName']) . '/img/' . $filePath);
+    if ($deleteResult) {
+        $responce = [
+            'success' => true,
+            'message' => 'Файл успешно удален'
+        ];
     } else {
-        header('Content-Type: application/json');
-
-        $manage->createZip($_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath'] . 'Projects/' . $_POST['nameDownloadProject'],  $_SERVER['DOCUMENT_ROOT'] . $_POST['editorPath'] . $_POST['nameDownloadProject'].'.zip');
-    
-        $result = array(
-        "zipPath" => $_POST['editorPath'] .  $_POST['nameDownloadProject'].'.zip'
-        );
-        echo json_encode($result);
+        $responce = [
+            'success' => false,
+            'message' => 'Ошибка при удалении файла'
+        ];
     }
-    
+
+    echo json_encode($responce);
+} elseif (isset($_POST['projectName'])) {
+    $targetDirectory = '../Projects/' . sanitazeInput($_POST['projectName']) . '/img';
+    $fileInputName = 'file';
+    $result = $workingWithMedia->uploadFile($fileInputName, $targetDirectory);
+    if ($result !== false) {
+        $responce = [
+            'success' => true,
+            'url' => $result
+        ];
+        echo json_encode($responce);
+    }
 }

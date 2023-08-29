@@ -57,12 +57,66 @@ function FormInput_string(params) {
                 case 'Title':
                     document.title = inputValue;
                     break;
+                case 'Width':
+                    this.elem.obj.css("width", inputValue);
+                    break;
+                case 'Margin':
+                    this.elem.obj.css("margin", inputValue);
+                    break;
+                case 'Padding':
+                    this.elem.obj.css("padding", inputValue);
+                    break;
+                case 'Height':
+                    this.elem.obj.css("height", inputValue);
+                    break;
+                case 'Font-size':
+                    this.elem.obj.css("font-size", inputValue);
+                    break;
+                case 'Font Weight':
+                    this.elem.obj.css("font-weight", inputValue);
+                    break;
+                case 'Font-family':
+                    this.elem.obj.css("font-family", inputValue);
+                    break;
+                case 'Line-height':
+                    this.elem.obj.css("line-height", inputValue);
+                    break;
+                case 'max-width':
+                    this.elem.obj.css("max-width", inputValue);
+                    break;
             }
             this.parentValue.value = inputValue;
         } else {
             switch (this.parentValue.name) {
                 case 'Title':
                     document.title = this.parentValue.value;
+                    break;
+                case 'Margin':
+                    this.elem.obj.css("margin",  this.parentValue.value);
+                    break;
+                case 'Padding':
+                    this.elem.obj.css("padding",  this.parentValue.value);
+                    break;
+                case 'Width':
+                    this.elem.obj.css("width", this.parentValue.value);
+                    break;
+                case 'Height':
+                    this.elem.obj.css("height", this.parentValue.value);
+                    break;
+                case 'Font-size':
+                    this.elem.obj.css("font-size", this.parentValue.value);
+                    break;
+                case 'Font Weight':
+                    this.elem.obj.css("font-weight", this.parentValue.value);
+                    break;
+                case 'Font-family':
+                    this.elem.obj.css("font-family", this.parentValue.value);
+                    break;
+                case 'Line-height':
+                    this.elem.obj.css("line-height", this.parentValue.value);
+                    break;
+                case 'max-width':
+                    this.elem.obj.css("max-width", this.parentValue.value);
                     break;
             }
         }
@@ -114,7 +168,6 @@ function FormInput_color(params) {
     }
 
     this.set = function () {
-
         const propertyActions = {
             'Цвет': () => {
                 const value = params.id !== undefined ? this.input.val() : this.parentValue.value;
@@ -152,8 +205,10 @@ function FormInput_select(params) {
     this.options = [];
     if (params.elem.type == 'new' && params.elem.parent.possibleChilds.length != 0) {
         this.selectValues = params.elem.parent.possibleChilds;
-    } else if (params.elem.possibleTypes.length != 0) {
+    } else if (params.elem.possibleTypes.length != 0 && this.parentValue.name != 'justify-content') {
         this.selectValues = params.elem.possibleTypes;
+    } else {
+        this.selectValues = this.parentValue.value;
     }
     for (let i = 0; i < this.selectValues.length; i++) {
         this.options[i] = $("<option>", {
@@ -177,6 +232,7 @@ function FormInput_select(params) {
 
         this.handleElementType = function () {
             this.panel.obj.html("");
+            console.log(this.parent.type)
             for (let i = this.parent.childs.length - 1; i > this.index; i--) {
                 this.parent.childs[i].index += 2;
                 this.parent.childs[this.parent.childs[i].index] = this.parent.childs[i];
@@ -196,6 +252,7 @@ function FormInput_select(params) {
                 index: this.index + 2
             });
             this.parent.childs[this.index + 1].wrapper.after(this.parent.childs[this.index + 2].wrapper);
+            console.log(this.parent.childs);
             this.panel.elem.unselect();
         }
 
@@ -213,9 +270,9 @@ function FormInput_select(params) {
             this.elem.obj[0] = newElement[0];
         }
 
-        this.handleDisplayType = function () {
+        this.activateChoosenType = function (property) {
             this.setSelectedValue(this.parentValue.value, this.input[0].value);
-            this.elem.obj.css("display", this.input[0].value);
+            this.elem.obj.css(property, this.input[0].value);
         }
 
         const propertyActions = {
@@ -224,9 +281,6 @@ function FormInput_select(params) {
             },
             'Тип заголовка': () => {
                 this.handleHeaderType();
-            },
-            'display': () => {
-                this.handleDisplayType();
             }
         }
 
@@ -234,6 +288,8 @@ function FormInput_select(params) {
 
         if (propertyAction) {
             propertyAction();
+        } else {
+            this.activateChoosenType(this.parentValue.name);
         }
 
     };
@@ -245,44 +301,75 @@ function FormInput_select(params) {
 function FormInput_file(params) {
     params.isLabel = true;
     this.createInput = function (params) {
+        console.log(params);
+        const disabled = this.parentValue.disabled !== false ? true : false;
         return $("<input>", {
             type: "file",
             id: "editor-field-" + this.id,
             value: this.parentValue.value,
-            accept: ".jpg, .jpeg, .png"
+            accept: ".jpg, .jpeg, .png",
+            disabled: disabled,
         });
     }
 
-    this.set = function () {
-        const fileInput = this.input[0];
-        if (fileInput.files && fileInput.files[0]) {
-            const file = fileInput.files[0];
-            const formData = new FormData();
-            formData.append('file', file);
-            console.log(formData);
-        }
 
-      /*   const propertyActions = {
-            'Цвет': () => {
-                const value = params.id !== undefined ? this.input.val() : this.parentValue.value;
-                this.elem.obj.css("backgroundColor", value);
-            },
-            'Цвет текста': () => {
-                const value = params.id !== undefined ? this.input.val() : this.parentValue.value;
-                this.elem.obj.css("color", value);
+    this.set = function () {
+        if (params.id !== undefined) {
+            const fileInput = this.input[0];
+            if (fileInput.files && fileInput.files[0] && !this.parentValue.disabled) {
+                const file = fileInput.files[0];
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('projectName', params.parent.editor.nameProject);
+                $.ajax({
+                    url: 'php/WorkingWithMedia.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: (responce) => {
+                        const imageURL = JSON.parse(responce).url;
+                        this.elem.obj[0].src = `Projects/${params.parent.editor.nameProject}/img/${imageURL}`;
+                        this.input[0].disabled = true;
+                        this.parentValue.value = imageURL;
+                    },
+                    error: () => {
+                        console.log('Ошибка загрузки файла');
+                    }
+                });
+            }
+        } else {
+            if (this.parentValue.value != '') {
+                this.elem.obj[0].src = `Projects/${params.elem.editor.nameProject}/img/${this.parentValue.value}`;
+                this.parentValue.disabled = true;
+            } else {
+                this.elem.obj[0].src = './Elements/Img/Img.png';
+                this.parentValue.disabled = false;
             }
         }
 
-        const propertyAction = propertyActions[this.parentValue.name];
-        if (propertyAction) {
-            propertyAction();
-        }
 
-        if (params.id !== undefined) {
-            this.parentValue.value = this.input.val();
-        } */
+        /*   const propertyActions = {
+              'Цвет': () => {
+                  const value = params.id !== undefined ? this.input.val() : this.parentValue.value;
+                  this.elem.obj.css("backgroundColor", value);
+              },
+              'Цвет текста': () => {
+                  const value = params.id !== undefined ? this.input.val() : this.parentValue.value;
+                  this.elem.obj.css("color", value);
+              }
+          }
+  
+          const propertyAction = propertyActions[this.parentValue.name];
+          if (propertyAction) {
+              propertyAction();
+          }
+  
+          if (params.id !== undefined) {
+              this.parentValue.value = this.input.val();
+          } */
     };
-    FormInput.call(this, params);  
+    FormInput.call(this, params);
 }
 
 function FormInput_submit(params) {
@@ -293,6 +380,40 @@ function FormInput_submit(params) {
             value: this.parentValue.name
         }).on("click", $.proxy(function () {
             this.setProps();
+        }, this.panel));
+    }
+    FormInput.call(this, params);
+}
+
+function FormInput_deleteImage(params) {
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            if (this.fields[1].input[0].disabled) {
+                const formData = new FormData();
+                formData.append('deletePath', this.elem.props.fileImage.values.fileImage.value);
+                formData.append('projectName', this.editor.nameProject);
+                $.ajax({
+                    url: 'php/WorkingWithMedia.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: (responce) => {
+                        this.elem.obj[0].src = './Elements/Img/Img.png';
+                        this.fields[1].input[0].disabled = false;
+                        this.elem.props.fileImage.values.fileImage.disabled = false;
+                        this.elem.props.fileImage.values.fileImage.value = '';
+                    },
+                    error: () => {
+                        console.log('Ошибка удаления файла');
+                    }
+                });
+            }
+
         }, this.panel));
     }
     FormInput.call(this, params);
@@ -313,7 +434,7 @@ function FormInput_saveJSON(params) {
 }
 
 function FormInput_openJSON(params) {
-    this.createInput = function(params) {
+    this.createInput = function (params) {
         return $("<input>", {
             type: "button",
             id: "editor-field-" + this.id,
@@ -327,7 +448,7 @@ function FormInput_openJSON(params) {
 }
 
 function FormInput_saveProject(params) {
-    this.createInput = function(params) {
+    this.createInput = function (params) {
         return $("<input>", {
             type: "button",
             id: "editor-field-" + this.id,
@@ -350,6 +471,23 @@ function FormInput_toProjectPage(params) {
             value: this.parentValue.name
         }).on("click", $.proxy(function () {
             window.location.href = "./";
+        }, this.panel.editor));
+    }
+
+    FormInput.call(this, params);
+}
+
+function FormInput_seePage(params) {
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            window.open(
+                `./Projects/${this.nameProject}`,
+                '_blank'
+            );
         }, this.panel.editor));
     }
 

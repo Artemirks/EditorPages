@@ -11,6 +11,10 @@ editorTypes.page = { //описание объекта
             name: "Параграф",
         },
         {
+            type: "Section",
+            name: "Блок section",
+        },
+        {
             type: "Div",
             name: "Блок div",
         },
@@ -19,7 +23,7 @@ editorTypes.page = { //описание объекта
             name: "Изображение",
         }
     ],
-    "props": ["name", "title", "backgroundColor", "submit", "saveProject", "toProjectPage"]
+    "props": ["name", "title", "margin", "padding", "backgroundColor", "maxWidth", "submit", "saveProject", "seePage" ,"toProjectPage"]
 }
 
 editorElementsMethods.page = function (params) { //методы объекта
@@ -30,4 +34,5 @@ editorElementsMethods.page = function (params) { //методы объекта
         type: "new"
     });
     element.obj.append(element.childs[i].wrapper);
+    params.element.props.maxWidth.values.maxWidth.value = "100%";
 }

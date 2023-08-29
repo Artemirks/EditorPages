@@ -9,6 +9,14 @@ editorTypes.div = { //описание объекта
         {
             type: "Paragraph",
             name: "Параграф",
+        },
+        {
+            type: "Div",
+            name: "Блок Div",
+        },
+        {
+            type: "img",
+            name: "Изображение",
         }
     ],
     "possibleTypes": [
@@ -33,7 +41,7 @@ editorTypes.div = { //описание объекта
             name: "table",
         }
     ],
-    "props": ["name", "typeDisplay", "backgroundColor", "submit", "saveProject", "toProjectPage","deleteElem"]
+    "props": ["name", "typeDisplay", "juctifyContent", "alignItems", "width", "maxWidth", "height", "margin", "padding", "submit", "deleteElem"]
 }
 
 editorElementsMethods.div = function (params) { //методы объекта
@@ -42,7 +50,8 @@ editorElementsMethods.div = function (params) { //методы объекта
     element.childs[i] = new EditorElem({
         editor: element.editor,
         type: "new",
-        parent: element
+        parent: element,
+        index: i
     });
     element.obj.append(element.childs[i].wrapper);
 }

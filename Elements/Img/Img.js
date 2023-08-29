@@ -1,7 +1,7 @@
 editorTypes.img = { //описание объекта, свойства для инициализации объекта
     "html": "<img></img>",
     "childs": false,
-    "props": ["name", "fileImage", "submit",  "deleteElem"]
+    "props": ["name", "fileImage", "deleteImage", "width", ,"height", "margin", "padding", "submit",  "deleteElem"]
 }
 
 editorElementsMethods.img = function (params) { //Метод который срабатывает при создании объекта

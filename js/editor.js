@@ -166,7 +166,7 @@ function EditorPanel(params) {
             this.elem = this.editor.elements[i];
             for (let key in this.editor.elements[i].props) {
                 for (let value in this.editor.elements[i].props[key].values) {
-                    if (this.editor.elements[i].props[key].values[value].value != '') {
+                    if (this.editor.elements[i].props[key].values[value].value != '' || this.editor.elements[i].props[key].values[value].type == 'file') {
                         let className = "FormInput_" + this.editor.elements[i].props[key].values[value].type;
                         this.fields[fieldsNumber] = new window[className]({
                             parentValue: this.editor.elements[i].props[key].values[value],
@@ -216,9 +216,15 @@ function EditorElem(params) {
     this.wrapper[0].elem = this;
 
     if (editorTypes[this.type].childs) {
-        this.obj = $(editorTypes[this.type].html, {
-            class: "editor-elem-obj column-center" //точно ли тут нужен column-center, думаю что нет
-        });
+        if (this.type == 'page') {
+            this.obj = $(editorTypes[this.type].html, {
+                class: "editor-elem-obj column-center" //точно ли тут нужен column-center, думаю что нет
+            });
+        } else {
+            this.obj = $(editorTypes[this.type].html, {
+                class: "editor-elem-obj"
+            });
+        }
         this.possibleChilds = editorTypes[this.type].possibleChilds;
     } else {
         this.obj = $(editorTypes[this.type].html, {

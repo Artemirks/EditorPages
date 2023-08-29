@@ -163,7 +163,6 @@ function FormInput_select(params) {
     this.obj
         .append(this.label)
         .append(this.select);
-
     this.set = function () {
         switch (this.parentValue.name) {
             case 'Тип элемента':

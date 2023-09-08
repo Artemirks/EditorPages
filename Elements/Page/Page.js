@@ -1,7 +1,33 @@
 editorTypes.page = { //описание объекта
     "html": "<div></div>", //только один тэг
     "childs": true,
-    "props": ["name", "title", "backgroundColor", "submit", "saveProject", "toProjectPage"]
+    "possibleChilds": [
+        {
+            type: "Header",
+            name: "Заголовок",
+        },
+        {
+            type: "Paragraph",
+            name: "Параграф",
+        },
+        {
+            type: "Link",
+            name: "Ссылка"
+        },
+        {
+            type: "Section",
+            name: "Блок section",
+        },
+        {
+            type: "Div",
+            name: "Блок div",
+        },
+        {
+            type: "img",
+            name: "Изображение",
+        }
+    ],
+    "props": ["name", "title", "margin", "padding", "backgroundColor", "maxWidth", "submit", "saveProject", "seePage", "toProjectPage"]
 }
 
 editorElementsMethods.page = function (params) { //методы объекта
@@ -12,4 +38,5 @@ editorElementsMethods.page = function (params) { //методы объекта
         type: "new"
     });
     element.obj.append(element.childs[i].wrapper);
+    params.element.props.maxWidth.values.maxWidth.value = "100%";
 }

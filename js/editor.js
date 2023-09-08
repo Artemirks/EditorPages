@@ -92,6 +92,8 @@ function Editor(params) {
     this.getHTML = function () { //Получение html кода страницы
         let content = this.page.wrapper[0].outerHTML.replace(/editor-elem-wrapper\s|\seditor-elem-selected|<div[^>]+class="[^>]*new[^>]*"[^>]*>.*?<\/div><\/div>/gm, '');
         content = content.replace(/></gm, '>\n<');
+        content = content.replace(/contenteditable(?:\s*=\s*["']?\w*["']?)?/g, '');
+        content = content.replace(/Projects\/.*\/img/gm, 'img');
         const removedDivs = $(content).find('div[class^="editor-elem-type"').removeClassWild('editor-elem-type-*');
         content = $(content).not(removedDivs).prop('outerHTML');
         return content;
@@ -162,17 +164,20 @@ function EditorPanel(params) {
         this.fields = [];
         let fieldsNumber = 0;
         for (let i = 0; i < this.editor.elements.length; i++) {
+            let elemID = 0;
             this.elem = this.editor.elements[i];
             for (let key in this.editor.elements[i].props) {
                 for (let value in this.editor.elements[i].props[key].values) {
-                    if (this.editor.elements[i].props[key].values[value].value != '') {
+                    if (this.editor.elements[i].props[key].values[value].value != '' || this.editor.elements[i].props[key].values[value].type == 'file') {
                         let className = "FormInput_" + this.editor.elements[i].props[key].values[value].type;
                         this.fields[fieldsNumber] = new window[className]({
                             parentValue: this.editor.elements[i].props[key].values[value],
                             panel: this,
-                            elem: this.elem
+                            elem: this.elem,
+                            index: this.elem.index
                         });
                         fieldsNumber++;
+                        elemID++;
                     }
                 }
             }
@@ -204,20 +209,33 @@ function EditorElem(params) {
     this.parent = params.parent;
     this.index = params.index;
     this.childs = [];
+    this.possibleChilds = [];
     this.props = [];
+    this.possibleTypes = [];
     this.wrapper = $("<div>", {
         class: "editor-elem-wrapper"
     });
     this.wrapper[0].elem = this;
 
     if (editorTypes[this.type].childs) {
-        this.obj = $(editorTypes[this.type].html, {
-            class: "editor-elem-obj column-center" //точно ли тут нужен column-center, думаю что нет
-        });
+        if (this.type == 'page') {
+            this.obj = $(editorTypes[this.type].html, {
+                class: "editor-elem-obj column-center" //точно ли тут нужен column-center, думаю что нет
+            });
+        } else {
+            this.obj = $(editorTypes[this.type].html, {
+                class: "editor-elem-obj"
+            });
+        }
+        this.possibleChilds = editorTypes[this.type].possibleChilds;
     } else {
         this.obj = $(editorTypes[this.type].html, {
             class: "editor-elem-obj"
         });
+    }
+
+    if (editorTypes[this.type].possibleTypes !== undefined) {
+        this.possibleTypes = editorTypes[this.type].possibleTypes;
     }
 
     for (let key in editorTypes[this.type].props) {
@@ -256,7 +274,13 @@ function EditorElem(params) {
     }
 
     this.wrapper.append(this.obj);
-    setTimeout(() => this.wrapper.css('display', this.obj.css('display')) , 50);
+    setTimeout(() => {
+        if (this.obj.css('display') == 'inline') {
+            this.wrapper.css('display', 'inline-block')
+        } else {
+            this.wrapper.css('display', this.obj.css('display'));
+        }
+    }, 50);
     this.changeClass = function (params) { //метод изменения класса
         this.type = params.type;
         this.wrapper

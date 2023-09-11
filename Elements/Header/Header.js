@@ -19,7 +19,7 @@ editorTypes.header = { //описание объекта, свойства дл�
             name: "h4",
         }
     ],
-    "props": ["name", "typeHeader", "elemText", "margin", "fontSize", "fontWeight", "fontFamily", "lineHeight", "textColor", "submit", "deleteElem"]
+    "props": ["name", "typeHeader", "elemText", "margin", "fontSize", "fontWeight", "fontFamily", "lineHeight", "textColor", "addElemBefore", "addElemAfter", "elemUp", "elemDown", "submit", "deleteElem"]
 }
 
 editorElementsMethods.header = function (params) { //Метод который срабатывает при создании объекта

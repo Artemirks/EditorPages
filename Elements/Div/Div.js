@@ -45,7 +45,7 @@ editorTypes.div = { //описание объекта
             name: "table",
         }
     ],
-    "props": ["name", "typeDisplay", "juctifyContent", "alignItems", "width", "maxWidth", "height", "margin", "padding", "submit", "deleteElem"]
+    "props": ["name", "typeDisplay", "juctifyContent", "alignItems", "width", "maxWidth", "height", "margin", "padding", "addElemBefore", "addElemAfter", "elemUp", "elemDown", "submit", "deleteElem"]
 }
 
 editorElementsMethods.div = function (params) { //методы объекта

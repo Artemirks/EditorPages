@@ -217,18 +217,18 @@ function EditorProperty_deleteElem(params) {
     return EditorProperty(params, EditorProperty_deleteElem.name, "deleteElem", "Удалить", false);
 }
 
-/* function EditorProperty_addElemBefore(params) {
-    return EditorProperty(params, EditorProperty_addElemBefore, "addElemBefore", "Добавить элемент ", false);
+function EditorProperty_addElemBefore(params) {
+    return EditorProperty(params, EditorProperty_addElemBefore.name, "addElemBefore", "Добавить элемент до", false);
 }
 
-function EditorProperty_deleteElem(params) {
-    return EditorProperty(params, EditorProperty_deleteElem.name, "deleteElem", "Удалить", false);
+function EditorProperty_addElemAfter(params) {
+    return EditorProperty(params, EditorProperty_addElemBefore.name, "addElemAfter", "Добавить элемент после", false);
 }
 
-function EditorProperty_deleteElem(params) {
-    return EditorProperty(params, EditorProperty_deleteElem.name, "deleteElem", "Удалить", false);
+function EditorProperty_elemUp(params) {
+    return EditorProperty(params, EditorProperty_elemUp.name, "elemUp", "\u005E", false);
 }
 
-function EditorProperty_deleteElem(params) {
-    return EditorProperty(params, EditorProperty_deleteElem.name, "deleteElem", "Удалить", false);
-} */
+function EditorProperty_elemDown(params) {
+    return EditorProperty(params, EditorProperty_elemDown.name, "elemDown", "\u02C5", false);
+}

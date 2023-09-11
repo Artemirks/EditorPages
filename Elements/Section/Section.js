@@ -23,7 +23,7 @@ editorTypes.section = { //описание объекта
             name: "Изображение",
         }
     ],
-    "props": ["name", "width", "maxWidth", "height", "margin", "padding", "submit", "deleteElem"]
+    "props": ["name", "width", "maxWidth", "height", "margin", "padding", "addElemBefore", "addElemAfter", "elemUp", "elemDown", "submit", "deleteElem"]
 }
 
 editorElementsMethods.section = function (params) { //методы объекта

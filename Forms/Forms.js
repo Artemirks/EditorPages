@@ -160,7 +160,7 @@ function FormInput_select(params) {
     const isFlexDisplay = params.panel.obj.find('#editor-field-1').val() == 'flex';
 
     let selectedObject;
-    if (params.elem.possibleTypes === undefined) {
+    if (this.parentValue.value !== undefined) {
         selectedObject = this.parentValue.value.find(obj => obj.selected === true);
     } else {
         selectedObject = params.elem.possibleTypes.find(obj => obj.selected === true);
@@ -197,7 +197,6 @@ function FormInput_select(params) {
 
     this.set = function () {
         this.setSelectedValue = function (array, valueToSet) {
-            console.log(array, valueToSet);
             for (let i = 0; i < array.length; i++) {
                 array[i].selected = array[i].type === valueToSet;
             }
@@ -206,31 +205,21 @@ function FormInput_select(params) {
 
         this.handleElementType = function () {
             this.panel.obj.html("");
-            for (let i = this.parent.childs.length - 1; i > this.index; i--) {
-                this.parent.childs[i].index += 2;
-                this.parent.childs[this.parent.childs[i].index] = this.parent.childs[i];
-            }
-
-            this.parent.childs[this.index + 1] = new EditorElem({
+            const oldElement = this.parent.childs[this.index]
+            this.parent.childs[this.index] = new EditorElem({
                 editor: this.parent.editor,
                 parent: this.parent,
                 type: this.input[0].value.toLowerCase(),
-                index: this.index + 1
+                index: this.index
             });
-            this.panel.elem.wrapper.after(this.parent.childs[this.index + 1].wrapper);
-            this.parent.childs[this.index + 2] = new EditorElem({
-                editor: this.parent.editor,
-                parent: this.parent,
-                type: "new",
-                index: this.index + 2
-            });
-            this.parent.childs[this.index + 1].wrapper.after(this.parent.childs[this.index + 2].wrapper);
+            this.panel.elem.wrapper.after(this.parent.childs[this.index].wrapper);
+            oldElement.wrapper[0].remove();
             this.panel.elem.unselect();
-        }
+        };
 
         this.handleHeaderType = function () {
             this.setSelectedValue(this.selectValues, this.input[0].value);
-
+            this.parentValue.value = this.selectValues;
             const oldElement = $(this.elem.obj[0]);
             const newElement = $('<' + this.input[0].value + '>')
                 .html(oldElement.html())
@@ -240,14 +229,16 @@ function FormInput_select(params) {
 
             oldElement.replaceWith(newElement);
             this.elem.obj[0] = newElement[0];
-        }
+        };
 
         this.activateChoosenType = function (property) {
-            if (!flexInputs || this.panel.obj.find('#editor-field-1').val() == 'flex') {
+            if (!flexInputs || isFlexDisplay || this.elem.props.typeDisplay.values.typeDisplay.value.find(obj => obj.selected === true).name == 'flex') {
                 this.setSelectedValue(this.selectValues, this.input[0].value);
+                this.parentValue.value = this.selectValues;
+
                 this.elem.obj.css(property, this.input[0].value);
             }
-            if (this.input[0].value == 'flex') {
+            if (this.input[0].value == 'flex' && this.panel.obj.find('#editor-field-2')[0] !== undefined) {
                 this.panel.obj.find('#editor-field-2')[0].disabled = false;
                 this.panel.obj.find('#editor-field-3')[0].disabled = false;
             }
@@ -460,14 +451,138 @@ function FormInput_deleteElem(params) {
             value: this.parentValue.name
         }).on("click", $.proxy(function () {
             this.panel.obj.html("");
-            for (let i = this.page.childs.length - 1; i > params.index; i--) {
-                this.page.childs[i].index -= 2;
+            for (let i = this.selectedElem.parent.childs.length - 1; i > params.index; i--) {
+                this.selectedElem.parent.childs[i].index--;
             }
-            this.page.childs[params.index - 1].wrapper[0].remove();
-            this.page.childs[params.index].wrapper[0].remove();
-            this.page.childs.splice(params.index - 1, 2);
+            this.selectedElem.parent.childs[params.index].wrapper[0].remove();
+            this.selectedElem.parent.childs.splice(params.index, 1);
+            if (this.selectedElem.parent.childs.length == 0) {
+                this.selectedElem.parent.childs[0] = new EditorElem({
+                    editor: this.panel.editor,
+                    type: "new",
+                    parent: this.selectedElem.parent,
+                    index: 0
+                });
+                this.selectedElem.parent.obj.append(this.selectedElem.parent.childs[0].wrapper);
+            }
         }, this.panel.editor));
     }
+
+    FormInput.call(this, params);
+}
+
+function FormInput_addElemBefore(params) {
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            const newElement = new EditorElem({
+                editor: this.panel.editor,
+                type: "new",
+                parent: this.selectedElem.parent,
+                index: this.selectedElem.index
+            });
+            this.selectedElem.parent.childs.splice(this.selectedElem.index, 0, newElement);
+            // Увеличить индексы элементов, идущих после вставленного элемента
+            for (let i = this.selectedElem.index + 1; i < this.selectedElem.parent.childs.length; i++) {
+                this.selectedElem.parent.childs[i].index++;
+            }
+            this.selectedElem.wrapper.before(newElement.wrapper);
+        }, this.panel.editor));
+    };
+
+    FormInput.call(this, params);
+}
+
+function FormInput_addElemAfter(params) {
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            const newElement = new EditorElem({
+                editor: this.panel.editor,
+                type: "new",
+                parent: this.selectedElem.parent,
+                index: this.selectedElem.index + 1
+            });
+            this.selectedElem.parent.childs.splice(this.selectedElem.index + 1, 0, newElement);
+            // Увеличить индексы элементов, идущих после вставленного элемента
+            for (let i = this.selectedElem.index + 2; i < this.selectedElem.parent.childs.length; i++) {
+                this.selectedElem.parent.childs[i].index++;
+            }
+            this.selectedElem.wrapper.after(newElement.wrapper);
+        }, this.panel.editor));
+    };
+
+    FormInput.call(this, params);
+}
+
+function FormInput_elemUp(params) {
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            if (this.selectedElem.index > 0) {
+                // Меняем элемент местами с верхним элементом в массиве childs
+                const currentIndex = this.selectedElem.index;
+                const newIndex = currentIndex - 1;
+                const parentChilds = this.selectedElem.parent.childs;
+
+                // Меняем элементы местами в массиве
+                const temp = parentChilds[currentIndex];
+                parentChilds[currentIndex] = parentChilds[newIndex];
+                parentChilds[newIndex] = temp;
+
+                // Меняем индексы элементов
+                this.selectedElem.index = newIndex;
+                parentChilds[currentIndex].index = currentIndex;
+                // Меняем элементы в DOM
+                const selectedElemWrapper = this.selectedElem.wrapper;
+                const upperElemWrapper = parentChilds[currentIndex].wrapper;
+
+                selectedElemWrapper.insertBefore(upperElemWrapper);
+            }
+        }, this.panel.editor));
+    };
+
+    FormInput.call(this, params);
+}
+
+function FormInput_elemDown(params) {
+    this.createInput = function (params) {
+        return $("<input>", {
+            type: "button",
+            id: "editor-field-" + this.id,
+            value: this.parentValue.name
+        }).on("click", $.proxy(function () {
+            if (this.selectedElem.index < this.selectedElem.parent.childs.length - 1) {
+                const currentIndex = this.selectedElem.index;
+                const newIndex = currentIndex + 1;
+                const parentChilds = this.selectedElem.parent.childs;
+
+                // Меняем элементы местами в массиве
+                const temp = parentChilds[currentIndex];
+                parentChilds[currentIndex] = parentChilds[newIndex];
+                parentChilds[newIndex] = temp;
+
+                // Меняем индексы элементов
+                this.selectedElem.index = newIndex;
+                parentChilds[currentIndex].index = currentIndex;
+
+                // Меняем элементы в DOM
+                const selectedElemWrapper = this.selectedElem.wrapper;
+                const lowerElemWrapper = parentChilds[currentIndex].wrapper;
+
+                selectedElemWrapper.insertAfter(lowerElemWrapper);
+            }
+        }, this.panel.editor));
+    };
 
     FormInput.call(this, params);
 }

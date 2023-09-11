@@ -275,10 +275,10 @@ function EditorElem(params) {
 
     this.wrapper.append(this.obj);
     setTimeout(() => {
-        if (this.obj.css('display') == 'inline') {
+        if (['inline', 'inline-block'].includes(this.obj.css('display'))) {
             this.wrapper.css('display', 'inline-block')
         } else {
-            this.wrapper.css('display', this.obj.css('display'));
+            this.wrapper.css('display', 'block');
         }
     }, 50);
     this.changeClass = function (params) { //метод изменения класса

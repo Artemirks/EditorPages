@@ -1,7 +1,7 @@
 editorTypes.paragraph = { //описание объекта, свойства для инициализации объекта
     "html": "<p contenteditable></p>",
     "childs": false,
-    "props": ["name", "elemText", "margin", "fontSize", "fontWeight", "fontFamily", "textColor", "lineHeight", "submit", "deleteElem"]
+    "props": ["name", "elemText", "margin", "fontSize", "fontWeight", "fontFamily", "textColor", "lineHeight", "addElemBefore", "addElemAfter", "elemUp", "elemDown", "submit", "deleteElem"]
 }
 
 editorElementsMethods.paragraph = function (params) { //Метод который срабатывает при создании объекта
